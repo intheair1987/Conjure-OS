@@ -1,0 +1,78 @@
+{
+    "order": [
+        "folder_1784240916928",
+        "folder_1784240533114",
+        "folder_1784240859620",
+        "folder_1784239486138",
+        "ApkStudio",
+        "AgentStudio",
+        "GitHubPublisher"
+    ],
+    "excluded_from_export": [],
+    "excluded": [],
+    "protected": [
+        "Whiteboard",
+        "LessonPlanner",
+        "AtlasTrack",
+        "orbit"
+    ],
+    "push_offset": 40,
+    "tailscale_domain": "conjure.bearded-basking.ts.net:8010",
+    "non_ssl_port": "8002",
+    "folders": {
+        "folder_1784239486138": {
+            "name": "Game",
+            "apps": [
+                "NeonRunner",
+                "TowerBloxx",
+                "ConjureBoy",
+                "SovereignQuest"
+            ]
+        },
+        "folder_1784240533114": {
+            "name": "Class",
+            "apps": [
+                "WordArena",
+                "LessonPlanner",
+                "ClassRewards",
+                "Whiteboard",
+                "EduNexus",
+                "PointKeeper"
+            ]
+        },
+        "folder_1784240859620": {
+            "name": "Else",
+            "apps": [
+                "TubeFlow",
+                "PdfPurge",
+                "PhotoVault",
+                "GoogleAPI",
+                "FocusFlow",
+                "HotspotTunnel",
+                "PortScanner"
+            ]
+        },
+        "folder_1784240916928": {
+            "name": "Tools",
+            "apps": [
+                "TravelPacker",
+                "PeerDrop",
+                "AtlasTrack",
+                "ScriptStudio"
+            ]
+        }
+    },
+    "dock": [
+        "LaunchSite",
+        "orbit",
+        "PWAStudio",
+        "ConjureDeployer"
+    ],
+    "dock_labels": true,
+    "hide_status_on_launch": true,
+    "wallpaper_blur": 66,
+    "disable_wallpaper": false,
+    "show_icon_backdrops": true,
+    "line_length": 40,
+    "box_size": 12
+}

@@ -1,0 +1,25 @@
+{
+    "model": "openrouter\/auto",
+    "presets": [
+        {
+            "name": "\ud83e\uddf9 Cleanup",
+            "prompt": "Rewrite this transcription of a recording in the original voice, but more coherently and logically expressed.\n\nYou may, but are not limited to, use the following methods if it helps it make the message clearer: cleaning up the formatting, use bullet points, or cleaning up the filler words... etc.\n\nReturn only the rewritten text. No comment.",
+            "temp": 0.29999999999999999
+        },
+        {
+            "name": "\ud83d\udc54 Make Formal",
+            "prompt": "Rewrite the following text to be professional, concise, and formal.",
+            "temp": 0.69999999999999996
+        },
+        {
+            "name": "\ud83e\udd84 Casual Tone",
+            "prompt": "Rewrite the following text to be casual, friendly, and easy to read.",
+            "temp": 0.90000000000000002
+        },
+        {
+            "name": "\ud83d\udcdd Summarize",
+            "prompt": "Summarize the following text into a single paragraph.",
+            "temp": 0.5
+        }
+    ]
+}

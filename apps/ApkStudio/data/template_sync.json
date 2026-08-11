@@ -1,0 +1,15 @@
+{
+    "templates/MainActivity_wrapper.java.tpl": [
+        "data/projects/ApkWrapper/assets/templates/MainActivity_child.java.tpl"
+    ],
+    "templates/AndroidManifest_wrapper.xml.tpl": [
+        "data/projects/ApkWrapper/assets/templates/AndroidManifest_child.xml.tpl"
+    ],
+    "templates/strings.xml.tpl": [
+        "data/projects/ApkWrapper/assets/templates/strings_child.xml.tpl"
+    ],
+    "templates/settings.html.tpl": [
+        "data/projects/ApkWrapper/assets/templates/settings_child.html.tpl",
+        "data/projects/ConjureRuntime/assets/settings.html"
+    ]
+}

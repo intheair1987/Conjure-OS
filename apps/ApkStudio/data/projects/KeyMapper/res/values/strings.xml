@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">KeyMapper</string>
+    <string name="accessibility_service_description">Intercepts hardware button presses to trigger customized actions based on screen, orientation, and app conditions.</string>
+</resources>

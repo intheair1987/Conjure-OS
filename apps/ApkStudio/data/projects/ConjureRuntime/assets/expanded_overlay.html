@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+    :root {
+      --transition-smooth: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+      --glass-bg: rgba(13, 13, 20, 0.85);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --amber-light: #f59e0b;
+    }
+    body {
+      background-color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden;
+    }
+    .control-pod {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border); border-radius: 32px; padding: 24px; width: 350px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      transition: border-color 0.6s ease, box-shadow 0.6s ease;
+    }
+    .pod-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .status-indicator { display: flex; align-items: center; gap: 8px; }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background-color: #10b981; box-shadow: 0 0 8px #10b981; animation: pulseDot 2s infinite ease-in-out; }
+    .status-text { font-size: 11px; font-weight: 600; letter-spacing: 1.2px; color: rgba(255, 255, 255, 0.4); text-transform: uppercase; }
+    .pod-tag { font-size: 11px; font-weight: 500; color: rgba(255, 255, 255, 0.25); letter-spacing: 0.5px; }
+    .tiles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .tile {
+      position: relative; background: rgba(255, 255, 255, 0.02);
+      border-top: 1px solid rgba(255, 255, 255, 0.1); border-bottom: 1px solid rgba(255, 255, 255, 0.02); border-left: 1px solid rgba(255, 255, 255, 0.04); border-right: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 20px; padding: 16px 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; outline: none; color: #ffffff; overflow: hidden;
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.08), inset 0 -1px 2px rgba(0, 0, 0, 0.5), 0 8px 16px rgba(0, 0, 0, 0.15);
+      transition: var(--transition-smooth);
+    }
+    .tile:active { transform: scale(0.95); }
+    .tile-light.is-active {
+      background: rgba(245, 158, 11, 0.04); border-top-color: rgba(245, 158, 11, 0.3); border-left-color: rgba(245, 158, 11, 0.1); border-right-color: rgba(245, 158, 11, 0.1); border-bottom-color: rgba(245, 158, 11, 0.05);
+      animation: tileBreathe 3s infinite ease-in-out;
+    }
+    .tile-light::before {
+      content: ''; position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(245, 158, 11, 0.12) 0%, rgba(245, 158, 11, 0) 80%); opacity: 0; transition: opacity 0.5s ease; pointer-events: none;
+    }
+    .tile-light.is-active::before { opacity: 1; }
+    .tile-close:active {
+      transform: scale(0.96, 0.90) translateY(1px); background: rgba(239, 68, 68, 0.15); box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+    }
+    .icon-wrapper {
+      position: relative; width: 44px; height: 44px; border-radius: 50%; background: rgba(255, 255, 255, 0.03); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.04); transition: var(--transition-smooth);
+    }
+    .icon-bulb, .icon-close { width: 20px; height: 20px; stroke: rgba(255, 255, 255, 0.7); stroke-width: 1.75px; fill: none; transition: var(--transition-smooth); }
+    .tile-light.is-active .icon-wrapper { background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.3); box-shadow: 0 0 15px rgba(245, 158, 11, 0.15); }
+    .tile-light.is-active .icon-bulb { stroke: var(--amber-light); fill: rgba(245, 158, 11, 0.1); filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.5)); }
+    .tile-label { font-size: 13px; font-weight: 500; letter-spacing: 0.3px; color: rgba(255, 255, 255, 0.9); transition: var(--transition-smooth); }
+    .tile-status { font-size: 11px; font-weight: 400; color: rgba(255, 255, 255, 0.4); margin-top: -2px; transition: var(--transition-smooth); }
+    .tile-light.is-active .tile-status { color: var(--amber-light); font-weight: 500; }
+    @keyframes pulseDot { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+    @keyframes tileBreathe { 0%, 100% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.12), inset 0 -1px 2px rgba(0, 0, 0, 0.5); border-color: rgba(245, 158, 11, 0.25); } 50% { box-shadow: 0 0 25px rgba(245, 158, 11, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2), inset 0 -1px 2px rgba(0, 0, 0, 0.4); border-color: rgba(245, 158, 11, 0.45); } }
+  </style>
+</head>
+<body>
+  <div class="control-pod">
+    <div class="pod-header">
+      <div class="status-indicator"><span class="status-dot"></span><span class="status-text">System Pod</span></div>
+      <span class="pod-tag">ONLINE</span>
+    </div>
+    <div class="tiles-grid">
+      <button class="tile tile-light" id="lightToggle">
+        <div class="icon-wrapper">
+          <svg class="icon-bulb" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1 .3 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path><line x1="9" y1="18" x2="15" y2="18"></line><line x1="10" y1="22" x2="14" y2="22"></line></svg>
+        </div>
+        <span class="tile-label">Ambient</span>
+        <span class="tile-status" id="lightStatusText">Off</span>
+      </button>
+      <button class="tile tile-patcher" id="patcherToggle">
+        <div class="icon-wrapper">
+          <svg class="icon-patcher" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="width:20px; height:20px; stroke:rgba(255,255,255,0.7); stroke-width:1.75px; fill:none;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.4a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+        </div>
+        <span class="tile-label">Patcher</span>
+        <span class="tile-status" id="patcherStatusText">Run Clip</span>
+      </button>
+      <button class="tile tile-close" id="closePanel">
+        <div class="icon-wrapper">
+          <svg class="icon-close" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </div>
+        <span class="tile-label">Dismiss</span>
+        <span class="tile-status">Close Pod</span>
+      </button>
+    </div>
+
+    <!-- Patcher Response Output Area -->
+    <div id="patcherResultBox" style="display: none; margin-top: 16px; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 12px; font-family: monospace; font-size: 11px; color: #e5e7eb;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span id="patcherBoxStatus" style="font-weight: 600; color: #818cf8; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px;">Patcher Response</span>
+        <button id="btnCopyPatcherReport" style="background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(99, 102, 241, 0.4); color: #818cf8; font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 6px; cursor: pointer;">Copy Report</button>
+      </div>
+      <pre id="patcherOutputText" style="white-space: pre-wrap; word-break: break-all; max-height: 140px; overflow-y: auto; margin: 0; font-family: inherit; font-size: 10px; color: #d1d5db; line-height: 1.4;"></pre>
+    </div>
+  </div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const lightToggle = document.getElementById('lightToggle');
+    const closePanel = document.getElementById('closePanel');
+    const lightStatusText = document.getElementById('lightStatusText');
+    const patcherToggle = document.getElementById('patcherToggle');
+    const patcherResultBox = document.getElementById('patcherResultBox');
+    const patcherBoxStatus = document.getElementById('patcherBoxStatus');
+    const patcherOutputText = document.getElementById('patcherOutputText');
+    const btnCopyPatcherReport = document.getElementById('btnCopyPatcherReport');
+
+    window.syncFlashlight = function() {
+      if (window.Service && typeof window.Service.isFlashlightOn === 'function') {
+        if (window.Service.isFlashlightOn()) {
+          lightToggle.classList.add('is-active');
+          lightStatusText.textContent = 'Active';
+        } else {
+          lightToggle.classList.remove('is-active');
+          lightStatusText.textContent = 'Off';
+        }
+      }
+    };
+    window.syncFlashlight();
+
+    if (lightToggle) {
+      lightToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (window.Service && typeof window.Service.toggleFlashlight === 'function') {
+          window.Service.toggleFlashlight();
+        }
+        setTimeout(window.syncFlashlight, 50);
+      });
+    }
+
+    function closeOverlay(e) {
+      if (e && e.stopPropagation) e.stopPropagation();
+      if (window.Service && typeof window.Service.closeConsole === 'function') {
+        window.Service.closeConsole();
+      }
+    }
+
+    if (closePanel) {
+      closePanel.addEventListener('click', closeOverlay);
+    }
+
+    let currentReportWrapped = '';
+
+    async function fetchWithTimeout(url, options, timeoutMs = 4000) {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        const response = await fetch(url, { ...options, signal: controller.signal });
+        clearTimeout(id);
+        return response;
+      } catch (err) {
+        clearTimeout(id);
+        throw err;
+      }
+    }
+
+    async function runPatcherFromClipboard() {
+      if (!patcherResultBox || !patcherBoxStatus || !patcherOutputText) return;
+      patcherResultBox.style.display = 'block';
+      patcherBoxStatus.style.color = '#818cf8';
+      patcherBoxStatus.textContent = 'READING CLIPBOARD...';
+      patcherOutputText.textContent = 'Fetching content from clipboard...';
+
+      try {
+        let clipText = '';
+        if (window.Service && typeof window.Service.getClipboardText === 'function') {
+          clipText = window.Service.getClipboardText() || '';
+        } else if (navigator.clipboard && navigator.clipboard.readText) {
+          try {
+            clipText = await navigator.clipboard.readText();
+          } catch(e) {}
+        }
+
+        if (!clipText || !clipText.trim()) {
+          patcherBoxStatus.style.color = '#ef4444';
+          patcherBoxStatus.textContent = 'CLIPBOARD EMPTY';
+          patcherOutputText.textContent = 'No text found in clipboard.';
+          return;
+        }
+
+        patcherBoxStatus.style.color = '#f59e0b';
+        patcherBoxStatus.textContent = 'EXECUTING PATCH...';
+
+        let httpsPort = 8000;
+        let httpPort = 8001;
+        if (window.Service && typeof window.Service.getSettingInt === 'function') {
+          httpsPort = window.Service.getSettingInt('https_port', 8000);
+          httpPort = window.Service.getSettingInt('http_port', 8001);
+        }
+
+        const dynamicDefault = `https://127.0.0.1:${httpsPort}/patcher.php`;
+
+        let primaryUrl = dynamicDefault;
+        if (window.Service && typeof window.Service.getSettingString === 'function') {
+          const savedUrl = window.Service.getSettingString('patcher_url', '');
+          if (savedUrl && savedUrl.trim()) {
+            primaryUrl = savedUrl.trim();
+          }
+        }
+
+        const candidateUrls = [
+          primaryUrl,
+          dynamicDefault,
+          `http://127.0.0.1:${httpPort}/patcher.php`,
+          `https://localhost:${httpsPort}/patcher.php`,
+          `http://localhost:${httpPort}/patcher.php`
+        ];
+
+        let res = null;
+        let attemptedLog = [];
+
+        for (const targetUrl of candidateUrls) {
+          patcherOutputText.textContent = `Connecting to ${targetUrl}...`;
+          try {
+            const fd = new FormData();
+            fd.append('plugin_action', 'cp_agent_execute');
+            fd.append('raw_input', clipText.trim());
+
+            const response = await fetchWithTimeout(targetUrl, { method: 'POST', body: fd }, 4000);
+            if (response && (response.ok || response.status === 200)) {
+              res = response;
+              break;
+            } else {
+              attemptedLog.push(`${targetUrl} -> HTTP ${response ? response.status : 'No Response'}`);
+            }
+          } catch(e) {
+            attemptedLog.push(`${targetUrl} -> ${e.name === 'AbortError' ? 'Timeout (4s)' : e.message}`);
+          }
+        }
+
+        if (!res) {
+          throw new Error('All Patcher API endpoints failed:\n' + attemptedLog.join('\n'));
+        }
+
+        const contentType = res.headers.get('content-type') || '';
+        let responseReport = '';
+
+        if (contentType.includes('application/json')) {
+          const data = await res.json();
+          if (data.status === 'exported') {
+            responseReport = data.exported_content || data.message || 'Export complete';
+          } else if (data.status === 'audit_complete') {
+            responseReport = data.audit_report || data.message || 'Audit complete';
+          } else if (data.diagnostic_report) {
+            responseReport = data.diagnostic_report;
+          } else if (data.status === 'committed') {
+            responseReport = `STATUS: COMMITTED\nMessage: ${data.message || 'Batch applied'}\nFiles Updated: ${(data.files_updated || []).join(', ') || 'None'}`;
+          } else {
+            responseReport = `STATUS: ${(data.status || 'UNKNOWN').toUpperCase()}\nMessage: ${data.message || data.error || JSON.stringify(data)}`;
+          }
+        } else {
+          responseReport = await res.text();
+        }
+
+        if (responseReport.trim().startsWith('~~~') && responseReport.trim().endsWith('~~~')) {
+          currentReportWrapped = responseReport.trim();
+        } else {
+          currentReportWrapped = '~~~\n' + responseReport.trim() + '\n~~~';
+        }
+
+        patcherBoxStatus.style.color = '#10b981';
+        patcherBoxStatus.textContent = 'PATCH COMPLETE';
+        patcherOutputText.textContent = currentReportWrapped;
+
+        if (window.Service && typeof window.Service.copyToClipboard === 'function') {
+          window.Service.copyToClipboard(currentReportWrapped);
+        } else if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(currentReportWrapped);
+        }
+
+      } catch (err) {
+        currentReportWrapped = '~~~\nERROR:\n' + err.message + '\n~~~';
+        patcherBoxStatus.style.color = '#ef4444';
+        patcherBoxStatus.textContent = 'REQUEST FAILED';
+        patcherOutputText.textContent = currentReportWrapped;
+
+        if (window.Service && typeof window.Service.copyToClipboard === 'function') {
+          window.Service.copyToClipboard(currentReportWrapped);
+        }
+      }
+    }
+
+    if (patcherToggle) {
+      patcherToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        runPatcherFromClipboard();
+      });
+    }
+
+    if (btnCopyPatcherReport) {
+      btnCopyPatcherReport.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!currentReportWrapped) return;
+        if (window.Service && typeof window.Service.copyToClipboard === 'function') {
+          window.Service.copyToClipboard(currentReportWrapped);
+        } else if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(currentReportWrapped);
+        }
+        const origText = btnCopyPatcherReport.textContent;
+        btnCopyPatcherReport.textContent = 'Copied!';
+        setTimeout(() => { btnCopyPatcherReport.textContent = origText; }, 1500);
+      });
+    }
+
+    document.body.addEventListener('click', closeOverlay);
+
+    const podEl = document.querySelector('.control-pod');
+    if (podEl) {
+      podEl.addEventListener('click', (e) => e.stopPropagation());
+    }
+  });
+</script>
+</body>
+</html>

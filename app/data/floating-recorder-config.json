@@ -1,0 +1,41 @@
+{
+    "travel_sensitivity": 10,
+    "reverse_travel": true,
+    "stop_at_dashboard": false,
+    "tier_order": [
+        "patcher",
+        "context_extras",
+        "save_snapshot",
+        "vault",
+        "theme",
+        "settings",
+        "empty",
+        "empty",
+        "empty"
+    ],
+    "fcb_nav_snapshot": "\n                <div class=\"fcb-strip-item\" data-page-id=\"main-scroll\" onpointerdown=\"fcbItemStart(event, 'main-scroll')\" onpointerup=\"fcbItemEnd(event, 'main-scroll', true)\">\n                    \n                    <span>Stream</span>\n                </div>\n            \n                <div class=\"fcb-strip-item\" data-page-id=\"dashboard-scroll-view\" onpointerdown=\"fcbItemStart(event, 'dashboard-scroll-view')\" onpointerup=\"fcbItemEnd(event, 'dashboard-scroll-view', true)\">\n                    <span data-sui-icon=\"gauge\" data-sui-size=\"22\" data-sui-stroke=\"2\"></span>\n                    <span>Dash</span>\n                </div>\n            \n                <div class=\"fcb-strip-item\" data-page-id=\"todo-app-view\" onpointerdown=\"fcbItemStart(event, 'todo-app-view')\" onpointerup=\"fcbItemEnd(event, 'todo-app-view', true)\">\n                    <span data-sui-icon=\"check\" data-sui-size=\"22\" data-sui-stroke=\"2\"></span>\n                    <span>To-Do</span>\n                </div>\n            \n                <div class=\"fcb-strip-item\" data-page-id=\"ai-assistant-view\" onpointerdown=\"fcbItemStart(event, 'ai-assistant-view')\" onpointerup=\"fcbItemEnd(event, 'ai-assistant-view', true)\">\n                    <span data-sui-icon=\"activity\" data-sui-size=\"22\" data-sui-stroke=\"2\"></span>\n                    <span>AI</span>\n                </div>\n            \n                <div class=\"fcb-strip-item\" data-page-id=\"app-maker-view\" onpointerdown=\"fcbItemStart(event, 'app-maker-view')\" onpointerup=\"fcbItemEnd(event, 'app-maker-view', true)\">\n                    <span data-sui-icon=\"grid\" data-sui-size=\"22\" data-sui-stroke=\"2\"></span>\n                    <span>App</span>\n                </div>\n            \n                <div class=\"fcb-strip-item\" data-page-id=\"project-planner-view\" onpointerdown=\"fcbItemStart(event, 'project-planner-view')\" onpointerup=\"fcbItemEnd(event, 'project-planner-view', true)\">\n                    <span data-sui-icon=\"folder\" data-sui-size=\"22\" data-sui-stroke=\"2\"></span>\n                    <span>Planner</span>\n                </div>\n            ",
+    "menu_distance": 75,
+    "back_x": 73,
+    "back_y": 25,
+    "back_gesture_dist": 100,
+    "gap": 0,
+    "debug": false,
+    "tier_assignments": {
+        "folders": 2,
+        "layout": 2,
+        "settings": 1,
+        "patcher": 2,
+        "dash": 1,
+        "draft": 1
+    },
+    "tier_spread": 120,
+    "ui_mode": "bar",
+    "fcb_docked": false,
+    "fcb_bottom_offset": 14,
+    "reverse_action_travel": false,
+    "fcb_dial_offset": 150,
+    "fcb_omnibutton": true,
+    "fcb_hide_left": false,
+    "fcb_single_tap_exit": true,
+    "fcb_double_tap_exit": true
+}

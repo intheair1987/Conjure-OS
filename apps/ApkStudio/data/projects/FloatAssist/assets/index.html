@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cosmos Utility</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="dash-header">
+    <div class="dash-badge">
+      <div class="dash-badge-dot"></div>
+      Aether Interface
+    </div>
+    <h1 class="dash-title">Cosmos Utility</h1>
+    <p class="dash-desc">Calibrate tactile properties of your volumetric floating overlay.</p>
+  </div>
+
+  <!-- Card: Toggle -->
+  <div class="dash-card">
+    <div class="card-row">
+      <div class="card-info">
+        <span class="card-title">Floating Helper</span>
+        <span class="card-desc">Show dynamic orb overlay on viewport screen</span>
+        <span id="txtServiceStatus" style="font-size: 11px; font-weight: bold; color: #ef4444; margin-top: 6px;">🔴 Status: Stopped</span>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="toggleHelper">
+        <span class="switch-slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Card: Back Gesture Dismiss -->
+  <div class="dash-card">
+    <div class="card-row">
+      <div class="card-info">
+        <span class="card-title">Back Button Dismiss Pod</span>
+        <span class="card-desc">Allow Android back gesture or button to close System Pod</span>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="toggleDismissBack" checked>
+        <span class="switch-slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Card: Size -->
+  <div class="dash-card">
+    <div class="card-info">
+      <span class="card-title">Orb Dimensional Scale</span>
+      <span class="card-desc">Adjust spatial scale profile using custom CSS root variables</span>
+    </div>
+    <div class="slider-control">
+      <div class="slider-header">
+        <span>Radial Diameter</span>
+        <span class="slider-value" id="valSize">56px</span>
+      </div>
+      <input type="range" min="40" max="80" value="56" class="custom-slider" id="sliderSize">
+    </div>
+  </div>
+
+  <!-- Card: Glow -->
+  <div class="dash-card">
+    <div class="card-info">
+      <span class="card-title">Ambient Core Energy</span>
+      <span class="card-desc">Calibrate volumetric intensity of drop-shadow light output</span>
+    </div>
+    <div class="slider-control">
+      <div class="slider-header">
+        <span>Glow Energy</span>
+        <span class="slider-value" id="valGlow">1.0x</span>
+      </div>
+      <input type="range" min="0" max="20" value="10" class="custom-slider" id="sliderGlow">
+    </div>
+  </div>
+
+  <!-- Card: Spectrum -->
+  <div class="dash-card">
+    <div class="card-info">
+      <span class="card-title">Emission Color Spectrum</span>
+      <span class="card-desc">Shift structural lighting elements and physical tint variables</span>
+    </div>
+    <div class="color-row">
+      <div class="color-dot" data-color="#6366f1" data-rgb="99, 102, 241" data-name="Indigo Flare" style="background: #6366f1;"></div>
+      <div class="color-dot" data-color="#0ea5e9" data-rgb="14, 165, 233" data-name="Aurora Teal" style="background: #0ea5e9;"></div>
+      <div class="color-dot" data-color="#10b981" data-rgb="16, 185, 129" data-name="Sol Emerald" style="background: #10b981;"></div>
+      <div class="color-dot" data-color="#f59e0b" data-rgb="245, 158, 11" data-name="Amber Nova" style="background: #f59e0b;"></div>
+    </div>
+  </div>
+
+  <!-- Card: Host Base URL Settings (Dual Exclusive Toggles) -->
+  <div class="dash-card">
+    <div class="card-info" style="margin-bottom: 12px;">
+      <span class="card-title">🌐 Host Base URL Settings</span>
+      <span class="card-desc">Configure active host connection for Patcher API and ApkStudio sync</span>
+    </div>
+
+    <!-- Subsection 1: Auto-Detect Runtime Base URLs -->
+    <div style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 14px; margin-bottom: 12px;">
+      <div class="card-row" style="margin-bottom: 8px;">
+        <div class="card-info">
+          <span class="card-title" style="font-size: 13px;">⚡ Auto-Detect Base URLs</span>
+          <span class="card-desc" style="font-size: 11px;">Reads live active ports from /sdcard/Conjure_Config/runtime_active.json</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="toggleAutoDetectUrls" checked>
+          <span class="switch-slider"></span>
+        </label>
+      </div>
+      <div id="boxAutoDetectedUrls" style="font-size: 11px; font-family: monospace; color: #34d399; background: rgba(0,0,0,0.3); padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(52, 211, 153, 0.2); line-height: 1.5; word-break: break-all;">
+        Detecting active runtime...
+      </div>
+    </div>
+
+    <!-- Subsection 2: Manual Base URLs -->
+    <div style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 14px;">
+      <div class="card-row" style="margin-bottom: 10px;">
+        <div class="card-info">
+          <span class="card-title" style="font-size: 13px;">✍️ Manual Base URLs</span>
+          <span class="card-desc" style="font-size: 11px;">Manually specify custom HTTP and HTTPS host addresses</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="toggleManualUrls">
+          <span class="switch-slider"></span>
+        </label>
+      </div>
+
+      <div id="boxManualUrlsInputs" style="display: flex; flex-direction: column; gap: 8px; opacity: 0.5; pointer-events: none; transition: opacity 0.2s;">
+        <div>
+          <label style="display: block; font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.5); margin-bottom: 4px; text-transform: uppercase;">HTTPS Base URL</label>
+          <input type="text" id="inpManualHttpsUrl" style="width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 10px; color: #ffffff; font-family: monospace; font-size: 11px; outline: none;" placeholder="https://127.0.0.1:8000">
+        </div>
+        <div>
+          <label style="display: block; font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.5); margin-bottom: 4px; text-transform: uppercase;">HTTP Base URL</label>
+          <input type="text" id="inpManualHttpUrl" style="width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 10px; color: #ffffff; font-family: monospace; font-size: 11px; outline: none;" placeholder="http://127.0.0.1:8001">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card: Termux Integration Setup -->
+  <div class="dash-card">
+    <div class="card-info" style="margin-bottom: 12px;">
+      <span class="card-title">⚡ Termux Integration Setup</span>
+      <span class="card-desc">Required configuration for 1-click Termux build dispatching</span>
+    </div>
+
+    <!-- Step 1: External App Execution Command -->
+    <div style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px; margin-bottom: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="font-size: 11px; font-weight: 700; color: #818cf8; text-transform: uppercase; letter-spacing: 0.5px;">Step 1: Termux External Execution</span>
+        <button id="btnCopyTermuxCmd" style="background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(99, 102, 241, 0.4); color: #818cf8; font-size: 10px; font-weight: 600; padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s;">Copy Command</button>
+      </div>
+      <pre id="codeTermuxCmd" style="white-space: pre-wrap; word-break: break-all; margin: 0; font-family: monospace; font-size: 10px; color: #34d399; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">echo "allow-external-apps = true" >> ~/.termux/termux.properties && termux-reload-settings</pre>
+      <div style="font-size: 10px; color: #9ca3af; margin-top: 6px;">Paste and run this command once inside your Termux terminal.</div>
+    </div>
+
+    <!-- Step 2: FloatAssist Permission -->
+    <div style="background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 12px; margin-bottom: 12px;">
+      <span style="font-size: 11px; font-weight: 700; color: #f59e0b; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 6px;">Step 2: FloatAssist App Permission</span>
+      <p style="font-size: 11px; color: #d1d5db; line-height: 1.5; margin: 0;">
+        Open <strong>Android Settings</strong> ➔ <strong>Apps</strong> ➔ <strong>FloatAssist</strong> ➔ <strong>Permissions</strong> ➔ Enable <strong>"Run commands in Termux environment"</strong>.
+      </p>
+    </div>
+
+    <!-- Step 3: Termux Display Over Other Apps -->
+    <div style="background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 12px;">
+      <span style="font-size: 11px; font-weight: 700; color: #3b82f6; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 6px;">Step 3: Termux Display Over Other Apps</span>
+      <p style="font-size: 11px; color: #d1d5db; line-height: 1.5; margin: 0;">
+        Open <strong>Android Settings</strong> ➔ <strong>Apps</strong> ➔ <strong>Termux</strong> ➔ Enable <strong>"Display over other apps"</strong> (or <strong>"Draw over other apps"</strong>) so Termux can launch build terminals from the background.
+      </p>
+    </div>
+  </div>
+
+  <!-- Card: Permission -->
+  <div class="dash-card">
+    <div class="card-row">
+      <div class="card-info">
+        <span class="card-title">Overlay Permission</span>
+        <span class="card-desc">Allow UI write permissions over native applications</span>
+      </div>
+      <button class="permission-btn" id="btnPermission">
+        <span id="lblPermission">Request</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Card: Telemetry -->
+  <div class="dash-card">
+    <div class="slider-header" style="margin-bottom: 12px;">
+      <span style="text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,0.4);">Physics Telemetry Console</span>
+      <span style="color: #10b981;">ONLINE</span>
+    </div>
+    <div class="card-row" style="margin-bottom: 6px;">
+      <span class="card-desc">Velocity Engine</span>
+      <span class="slider-value" id="telVelocity" style="font-size: 12px; font-weight: normal;">0.00 px/s</span>
+    </div>
+    <div class="card-row" style="margin-bottom: 6px;">
+      <span class="card-desc">Deformation Delta</span>
+      <span class="slider-value" id="telDeformation" style="font-size: 12px; font-weight: normal;">0.0%</span>
+    </div>
+    <div class="card-row" style="margin-bottom: 6px;">
+      <span class="card-desc">Spatial Coordinates</span>
+      <span class="slider-value" id="telCoords" style="font-size: 12px; font-weight: normal;">X: 20px / Y: 250px</span>
+    </div>
+    <div class="card-row" style="margin-bottom: 6px;">
+      <span class="card-desc">Orb Constraint</span>
+      <span class="slider-value" id="telConstraint" style="font-size: 12px; font-weight: normal;">Clamped</span>
+    </div>
+    <div class="card-row">
+      <span class="card-desc">Core Lumens System</span>
+      <span class="slider-value" id="telSpectral" style="font-size: 12px; font-weight: normal;">Indigo Flare</span>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

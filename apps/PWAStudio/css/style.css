@@ -1,0 +1,77 @@
+body {
+  font-family: 'Inter', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+/* Smooth custom scrollbars for horizontal shelfs */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+/* Squircle clip path simulation for pure organic iOS rounded corners */
+.squircle {
+  clip-path: url(#squircle-clip);
+}
+/* Full-bleed rendering for SVG icons inside main app list */
+.pwa-app-icon > svg {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+/* Dynamic highlight pulse on setup success */
+@keyframes app-update-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(27, 67, 50, 0.4);
+    transform: scale(1.015);
+    border-color: #1B4332;
+    background-color: rgba(27, 67, 50, 0.05);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(27, 67, 50, 0);
+    transform: scale(1.015);
+    border-color: #1B4332;
+    background-color: rgba(27, 67, 50, 0.05);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(27, 67, 50, 0);
+    transform: scale(1);
+  }
+}
+.app-highlight-pulse {
+  animation: app-update-pulse 1.5s cubic-bezier(0.4, 0, 0.2, 1) 2;
+}
+/* Allow native vertical scrolling through horizontal scrollable container */
+#drafts-container {
+  overscroll-behavior-y: auto;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x pan-y;
+}
+
+/* Strict Slider UX: Prevent track tapping, allow thumb dragging, allow native vertical scroll */
+input[type="range"] {
+  pointer-events: none;
+  touch-action: pan-y;
+}
+input[type="range"]::-webkit-slider-thumb {
+  pointer-events: auto;
+  cursor: grab;
+}
+input[type="range"]::-webkit-slider-thumb:active {
+  cursor: grabbing;
+}
+input[type="range"]::-moz-range-thumb {
+  pointer-events: auto;
+  cursor: grab;
+}
+input[type="range"]::-moz-range-thumb:active {
+  cursor: grabbing;
+}
+
+/* Prevent mobile context menus and callouts on long-press buttons */
+button {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}

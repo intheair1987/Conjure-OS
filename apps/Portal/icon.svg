@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" data-pwa-studio-config="{&quot;id&quot;:&quot;batch-Portal&quot;,&quot;type&quot;:&quot;outline&quot;,&quot;db&quot;:&quot;Lucide&quot;,&quot;bg&quot;:&quot;#FFF1F2&quot;,&quot;shape&quot;:&quot;square&quot;,&quot;icon&quot;:&quot;home&quot;,&quot;stroke&quot;:2,&quot;strokeColor&quot;:&quot;#7209B7&quot;,&quot;emoji&quot;:null,&quot;shadow&quot;:0,&quot;size&quot;:100,&quot;bgTexture&quot;:&quot;none&quot;,&quot;bgTextureScale&quot;:20,&quot;bgTextureThickness&quot;:2,&quot;bgTextureColor&quot;:&quot;&quot;,&quot;contShadowDist&quot;:0,&quot;contShadowBlur&quot;:0,&quot;contShadowAngle&quot;:90,&quot;contOutlineStyle&quot;:&quot;none&quot;,&quot;contOutlineWidth&quot;:4,&quot;contOutlineColor&quot;:&quot;#1c1917&quot;,&quot;innerRotation&quot;:0,&quot;bgOpacity&quot;:100,&quot;contShadowEnabled&quot;:false,&quot;contSize&quot;:100,&quot;contSizeLocked&quot;:false}">
+  <g >
+    <g  >
+    <rect width="512" height="512" rx="112" fill="#FFF1F2" fill-opacity="1" />
+  </g>
+    <g transform="rotate(0, 256, 256)">
+    <g ><g class="lucide-home" transform="translate(112, 112) scale(12)" stroke="#7209B7" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" color="#7209B7">
+  <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+  <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+</g></g>
+  </g>
+  </g>
+</svg>

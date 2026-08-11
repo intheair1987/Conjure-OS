@@ -1,0 +1,8 @@
+{
+    "lan": "10.244.173.183",
+    "tailscale": "100.84.134.46",
+    "tailscale_domain": "jflip.bearded-basking.ts.net",
+    "http_port": 8002,
+    "https_port": 8000,
+    "last_updated": 1786453780
+}

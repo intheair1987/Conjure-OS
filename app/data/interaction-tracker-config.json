@@ -1,0 +1,8 @@
+{
+    "enabled": true,
+    "dot_color": "#FF3B30",
+    "mode": "dim",
+    "dim_opacity": "20",
+    "dim_brightness": "95",
+    "dim_saturation": "50"
+}

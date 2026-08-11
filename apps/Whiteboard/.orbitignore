@@ -1,0 +1,8 @@
+# Orbit Deployment Exclusions
+# Exclude SQLite databases to protect live production data and save bandwidth
+app.db
+app.db-shm
+app.db-wal
+
+# Exclude heavy uploaded media assets and directory caches
+data/assets/

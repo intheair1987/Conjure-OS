@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ball_root"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:layout_gravity="center"
+    android:padding="8dp">
+
+    <ImageView
+        android:id="@+id/ball_image"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        tools:layout_width="56dp"
+        tools:layout_height="56dp"
+        android:layout_gravity="center"
+        android:scaleType="centerInside"
+        android:src="@android:drawable/ic_menu_help"
+        tools:src="@null"
+        tools:background="radial-gradient(circle at 35% 35%, #ffffff 0%, rgba(255,255,255,0) 12%), radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 35%), radial-gradient(circle at 45% 45%, rgba(99, 102, 241, 0.95) 0%, rgba(30, 27, 75, 0.98) 65%, #050508 100%)"
+        tools:boxShadow="0 10px 24px -5px rgba(0, 0, 0, 0.4), inset 0 3px 6px rgba(255, 255, 255, 0.35), inset 0 -3px 8px rgba(0, 0, 0, 0.75), inset -6px -6px 12px rgba(99, 102, 241, 0.15), 0 0 0 1px rgba(255,255,255,0.2)"
+        tools:cornerRadius="28dp" />
+</FrameLayout>

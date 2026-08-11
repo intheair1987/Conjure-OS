@@ -1,0 +1,61 @@
+{
+    "model": "whisper-1",
+    "prompt": "I often talk about my work in Kaohsiung, my projects for MacroDroid, AutoHotKey, OpenAI Whisper, and Google Apps Script, and I may mention my name, Jasper Tsai.",
+    "sound_start": "app\/sounds\/sound_start.ogg",
+    "sound_stop": "app\/sounds\/sound_stop.ogg",
+    "provider": "openrouter",
+    "or_model": "openai\/gpt-4o-mini-transcribe",
+    "or_prompt": "I often talk about my work in Kaohsiung, my projects for MacroDroid, Termux, AutoHotKey, OpenAI Whisper, and Google Apps Script, and I may mention my name, Jasper Tsai, aka Chunghsun Tsai.",
+    "or_models_cached": [
+        {
+            "id": "google\/chirp-3",
+            "name": "Google: Chirp 3",
+            "pricing": {
+                "prompt": "0.016",
+                "completion": "0"
+            }
+        },
+        {
+            "id": "openai\/gpt-4o-mini-transcribe",
+            "name": "OpenAI: GPT-4o Mini Transcribe",
+            "pricing": {
+                "prompt": "0.00000125",
+                "completion": "0.000005"
+            }
+        },
+        {
+            "id": "openai\/gpt-4o-transcribe",
+            "name": "OpenAI: GPT-4o Transcribe",
+            "pricing": {
+                "prompt": "0.0000025",
+                "completion": "0.00001"
+            }
+        },
+        {
+            "id": "openai\/whisper-1",
+            "name": "OpenAI: Whisper 1",
+            "pricing": {
+                "prompt": "0.006",
+                "completion": "0"
+            }
+        },
+        {
+            "id": "openai\/whisper-large-v3",
+            "name": "OpenAI: Whisper Large V3",
+            "pricing": {
+                "prompt": "0.111",
+                "completion": "0"
+            }
+        },
+        {
+            "id": "openai\/whisper-large-v3-turbo",
+            "name": "OpenAI: Whisper Large V3 Turbo",
+            "pricing": {
+                "prompt": "0.04",
+                "completion": "0"
+            }
+        }
+    ],
+    "or_temp": "0.4",
+    "or_lang": ""
+}

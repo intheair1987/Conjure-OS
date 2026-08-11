@@ -1,0 +1,285 @@
+{
+    "visible": [
+        "FilePatchManager",
+        "AboutConjure"
+    ],
+    "hidden_folders": [
+        {
+            "id": "f_82ba7tkvx",
+            "name": "\ud83d\udd27 SYSTEM & ADMINISTRATIVE",
+            "plugins": [],
+            "folders": [
+                {
+                    "id": "f_6yfgva2kc",
+                    "name": "MAINTENANCE",
+                    "plugins": [
+                        "PluginOrganizer",
+                        "SettingLayoutFixer",
+                        "DatabaseManager",
+                        "CodeRefinery",
+                        "SearchAndReplace",
+                        "StorageOptimizer",
+                        "TimestampFixer",
+                        "TimezoneOverride",
+                        "EditLog",
+                        "LiveSync",
+                        "ServerPing",
+                        "BacklogAuditor",
+                        "PluginManager_oldstuff",
+                        "CodeAuditor",
+                        "ContextExporter",
+                        "PatchHistory"
+                    ],
+                    "folders": [],
+                    "isOpen": true
+                },
+                {
+                    "id": "f_i6zj4by64",
+                    "name": "SECURITY",
+                    "plugins": [
+                        "Authentication",
+                        "SecurityHardener"
+                    ],
+                    "folders": [],
+                    "isOpen": true
+                },
+                {
+                    "id": "f_4lyhaqpz6",
+                    "name": "BACKUP & RECOVERY",
+                    "plugins": [
+                        "SystemCheckpoint",
+                        "Backup",
+                        "MigrationTool",
+                        "DemoMode"
+                    ],
+                    "folders": [],
+                    "isOpen": true
+                }
+            ],
+            "isOpen": true
+        },
+        {
+            "id": "f_u67rug3jj",
+            "name": "\u2728 AI & TRANSCRIPTION",
+            "plugins": [],
+            "folders": [
+                {
+                    "id": "f_5gk02nqn7",
+                    "name": "ENGINES",
+                    "plugins": [
+                        "OpenRouterAI",
+                        "ConjureCore",
+                        "RemoteUpload"
+                    ],
+                    "folders": [],
+                    "isOpen": true
+                },
+                {
+                    "id": "f_ks5196liw",
+                    "name": "FEEDBACK",
+                    "plugins": [
+                        "TranscriptionSound"
+                    ],
+                    "folders": [],
+                    "isOpen": true
+                },
+                {
+                    "id": "f_1779295403712",
+                    "name": "UTILITIES",
+                    "plugins": [
+                        "AiChat",
+                        "WebSearch",
+                        "AiAssistant",
+                        "MacroDroidBridge"
+                    ],
+                    "folders": [],
+                    "isOpen": true
+                }
+            ],
+            "isOpen": true
+        },
+        {
+            "id": "f_w9erq9593",
+            "name": "\ud83c\udfa8 INTERFACE & THEMING",
+            "plugins": [
+                "IconStudio"
+            ],
+            "folders": [
+                {
+                    "id": "f_u5vuzt12c",
+                    "name": "VISUAL STYLES",
+                    "plugins": [
+                        "ThemePresets",
+                        "FontCustomizer",
+                        "PageTitleCustomizer",
+                        "DynamicHeader"
+                    ],
+                    "folders": [],
+                    "isOpen": true
+                },
+                {
+                    "id": "f_jz2sue399",
+                    "name": "PERFORMANCE & MOTION",
+                    "plugins": [
+                        "AnimationEngine",
+                        "ScrollReveal",
+                        "VirtualScrolling",
+                        "HydrationGuard"
+                    ],
+                    "folders": [],
+                    "isOpen": true
+                },
+                {
+                    "id": "f_mz8sehibn",
+                    "name": "LAYOUTS",
+                    "plugins": [
+                        "PageLayout",
+                        "SharedUI",
+                        "ViewStandard",
+                        "ViewGrid"
+                    ],
+                    "folders": [],
+                    "isOpen": true
+                }
+            ],
+            "isOpen": true
+        },
+        {
+            "id": "f_vqo7mxih6",
+            "name": "\ud83d\uddc4\ufe0f NOTE ORGANIZATION",
+            "plugins": [],
+            "folders": [
+                {
+                    "id": "f_r87bw6oyo",
+                    "name": "STRUCTURAL",
+                    "plugins": [
+                        "SmartOrganizer",
+                        "Stacks",
+                        "LabelOrganizer",
+                        "LocationHistory",
+                        "ArchiveHistory",
+                        "SectionManager"
+                    ],
+                    "folders": [],
+                    "isOpen": true
+                },
+                {
+                    "id": "f_q450jqn76",
+                    "name": "PROCESSING",
+                    "plugins": [
+                        "ManualEditor",
+                        "MergeEntries",
+                        "WordCounter",
+                        "ReadMore"
+                    ],
+                    "folders": [],
+                    "isOpen": true
+                }
+            ],
+            "isOpen": true
+        },
+        {
+            "id": "f_k21ef139j",
+            "name": "\u26a1 GESTURES & INTERACTION",
+            "plugins": [],
+            "folders": [
+                {
+                    "id": "f_e7ddy8grb",
+                    "name": "INPUT METHODS",
+                    "plugins": [
+                        "FloatingRecorder",
+                        "StealthRecorder"
+                    ],
+                    "folders": [],
+                    "isOpen": true
+                },
+                {
+                    "id": "f_huifw8611",
+                    "name": "GESTURES & FEEDBACK",
+                    "plugins": [
+                        "InteractionManager",
+                        "InteractionTracker",
+                        "DoubleTapToCopy",
+                        "FabToaster",
+                        "SmartInteractions",
+                        "ScrollableActionBar",
+                        "LiveSyncPhantomFilter",
+                        "FloatingCommandBar"
+                    ],
+                    "folders": [],
+                    "isOpen": true
+                },
+                {
+                    "id": "f_b9uqb1tr3",
+                    "name": "SELECTION & BULK",
+                    "plugins": [
+                        "SelectAll",
+                        "SequentialCopy",
+                        "ProgressPill",
+                        "DeletionProgress",
+                        "RemovalIndicator",
+                        "RemovalAnimations",
+                        "DogEar"
+                    ],
+                    "folders": [],
+                    "isOpen": true
+                }
+            ],
+            "isOpen": true
+        },
+        {
+            "id": "f_gxrhz627a",
+            "name": "\ud83d\ude80 STANDALONE APPS",
+            "plugins": [
+                "Dashboard",
+                "ToDoList",
+                "ViewCalendar",
+                "DraftPad",
+                "CalorieTracker",
+                "FoodDatabase",
+                "AppMaker",
+                "ProjectPlanner",
+                "FitbitSync",
+                "FileStudio",
+                "FileVault"
+            ],
+            "folders": [],
+            "isOpen": true
+        }
+    ],
+    "hidden_root": [
+        "Onboarding"
+    ],
+    "hidden_order": [
+        {
+            "type": "folder",
+            "id": "f_82ba7tkvx"
+        },
+        {
+            "type": "folder",
+            "id": "f_u67rug3jj"
+        },
+        {
+            "type": "folder",
+            "id": "f_w9erq9593"
+        },
+        {
+            "type": "folder",
+            "id": "f_vqo7mxih6"
+        },
+        {
+            "type": "folder",
+            "id": "f_k21ef139j"
+        },
+        {
+            "type": "folder",
+            "id": "f_gxrhz627a"
+        },
+        {
+            "type": "plugin",
+            "id": "Onboarding"
+        }
+    ],
+    "show_visibility_btn": false,
+    "show_status_toggles": false
+}

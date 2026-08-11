@@ -1,0 +1,9 @@
+{
+    "provider": "tavily",
+    "searx_instance": "",
+    "max_results": 10,
+    "proxy_mode": "bridge",
+    "proxy_list": "",
+    "rotate_ua": true,
+    "auto_extract": true
+}

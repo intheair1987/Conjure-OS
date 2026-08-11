@@ -1,0 +1,19 @@
+{
+    "name": "Whiteboard",
+    "short_name": "Whiteboard",
+    "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\" width=\"512\" height=\"512\" data-pwa-studio-config=\"{&quot;id&quot;:&quot;batch-Whiteboard&quot;,&quot;type&quot;:&quot;outline&quot;,&quot;db&quot;:&quot;Lucide&quot;,&quot;bg&quot;:&quot;#FFF1F2&quot;,&quot;shape&quot;:&quot;square&quot;,&quot;icon&quot;:&quot;palette&quot;,&quot;stroke&quot;:2,&quot;strokeColor&quot;:&quot;#7209B7&quot;,&quot;emoji&quot;:null,&quot;shadow&quot;:0,&quot;size&quot;:100,&quot;bgTexture&quot;:&quot;none&quot;,&quot;bgTextureScale&quot;:20,&quot;bgTextureThickness&quot;:2,&quot;bgTextureColor&quot;:&quot;&quot;,&quot;contShadowDist&quot;:0,&quot;contShadowBlur&quot;:0,&quot;contShadowAngle&quot;:90,&quot;contOutlineStyle&quot;:&quot;none&quot;,&quot;contOutlineWidth&quot;:4,&quot;contOutlineColor&quot;:&quot;#1c1917&quot;,&quot;innerRotation&quot;:0,&quot;bgOpacity&quot;:100,&quot;contShadowEnabled&quot;:false,&quot;contSize&quot;:100,&quot;contSizeLocked&quot;:false}\">\n  <g >\n    <g  >\n    <rect width=\"512\" height=\"512\" rx=\"112\" fill=\"#FFF1F2\" fill-opacity=\"1\" />\n  </g>\n    <g transform=\"rotate(0, 256, 256)\">\n    <g ><g class=\"lucide-palette\" transform=\"translate(112, 112) scale(12)\" stroke=\"#7209B7\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\" color=\"#7209B7\">\n  <path d=\"M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z\" />\n  <circle cx=\"13.5\" cy=\"6.5\" r=\".5\" fill=\"currentColor\" />\n  <circle cx=\"17.5\" cy=\"10.5\" r=\".5\" fill=\"currentColor\" />\n  <circle cx=\"6.5\" cy=\"12.5\" r=\".5\" fill=\"currentColor\" />\n  <circle cx=\"8.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\" />\n</g></g>\n  </g>\n  </g>\n</svg>",
+    "color": "#FFF1F2",
+    "description": "A highly personalized infinite canvas whiteboard custom-built with Conjure OS. Designed for specialized workflows and general use, featuring unlimited resizable floating viewports, innovative top-edge text box drag-insertion with automatic zoom scaling, stylus pen tilt-activated tools (eraser, highlighter, and colors), automatic Magic Canvas folder imports with customized quality and spacing, and direct document integration with the Lesson Planner API.",
+    "start_url": "./index.php",
+    "display": "standalone",
+    "background_color": "#FFF1F2",
+    "theme_color": "#FFF1F2",
+    "icons": [
+        {
+            "src": "icon.svg?v=1785513779",
+            "sizes": "512x512",
+            "type": "image/svg+xml",
+            "purpose": "any"
+        }
+    ]
+}

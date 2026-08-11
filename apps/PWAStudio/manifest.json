@@ -1,0 +1,18 @@
+{
+    "name": "PWA Studio",
+    "short_name": "PWA Studio",
+    "description": "Sovereign developer workspace and layout management companion.",
+    "display": "standalone",
+    "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\" width=\"512\" height=\"512\" data-pwa-studio-config=\"{&quot;id&quot;:&quot;batch-PWAStudio&quot;,&quot;type&quot;:&quot;outline&quot;,&quot;db&quot;:&quot;Lucide&quot;,&quot;bg&quot;:&quot;#FFF1F2&quot;,&quot;shape&quot;:&quot;square&quot;,&quot;icon&quot;:&quot;flower&quot;,&quot;stroke&quot;:2,&quot;strokeColor&quot;:&quot;#7209B7&quot;,&quot;emoji&quot;:null,&quot;shadow&quot;:0,&quot;size&quot;:100,&quot;bgTexture&quot;:&quot;none&quot;,&quot;bgTextureScale&quot;:20,&quot;bgTextureThickness&quot;:2,&quot;bgTextureColor&quot;:&quot;&quot;,&quot;contShadowDist&quot;:0,&quot;contShadowBlur&quot;:0,&quot;contShadowAngle&quot;:90,&quot;contOutlineStyle&quot;:&quot;none&quot;,&quot;contOutlineWidth&quot;:4,&quot;contOutlineColor&quot;:&quot;#1c1917&quot;,&quot;innerRotation&quot;:0,&quot;bgOpacity&quot;:100,&quot;contShadowEnabled&quot;:false,&quot;contSize&quot;:100,&quot;contSizeLocked&quot;:false}\">\n  <g >\n    <g  >\n    <rect width=\"512\" height=\"512\" rx=\"112\" fill=\"#FFF1F2\" fill-opacity=\"1\" />\n  </g>\n    <g transform=\"rotate(0, 256, 256)\">\n    <g ><g class=\"lucide-flower\" transform=\"translate(112, 112) scale(12)\" stroke=\"#7209B7\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\" color=\"#7209B7\">\n  <circle cx=\"12\" cy=\"12\" r=\"3\" />\n  <path d=\"M12 16.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 1 1 12 7.5a4.5 4.5 0 1 1 4.5 4.5 4.5 4.5 0 1 1-4.5 4.5\" />\n  <path d=\"M12 7.5V9\" />\n  <path d=\"M7.5 12H9\" />\n  <path d=\"M16.5 12H15\" />\n  <path d=\"M12 16.5V15\" />\n  <path d=\"m8 8 1.88 1.88\" />\n  <path d=\"M14.12 9.88 16 8\" />\n  <path d=\"m8 16 1.88-1.88\" />\n  <path d=\"M14.12 14.12 16 16\" />\n</g></g>\n  </g>\n  </g>\n</svg>",
+    "color": "#FFF1F2",
+    "theme_color": "#FFF1F2",
+    "background_color": "#FFF1F2",
+    "icons": [
+        {
+            "src": "icon.svg?v=1785513779",
+            "sizes": "512x512",
+            "type": "image/svg+xml",
+            "purpose": "any"
+        }
+    ]
+}

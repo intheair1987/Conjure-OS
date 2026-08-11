@@ -1,0 +1,17 @@
+{
+    "date": "2026-08-12 04:10:47",
+    "tier": "foundation",
+    "files": [
+        "app\/data\/knowledge\/system_instructions.md",
+        "app\/data\/knowledge\/patcher_manual.md",
+        "app\/data\/knowledge\/system_structure.md",
+        "app\/paths.php",
+        "app\/data\/edit-log.json",
+        "app\/data\/knowledge\/sys_map.json",
+        "app\/data\/knowledge\/sys_map_apps-private.json",
+        "app\/data\/knowledge\/AI_Command_Registry.md",
+        "app\/data\/knowledge\/Methods.md",
+        "app\/data\/knowledge\/_Blueprint.md",
+        "app\/data\/knowledge\/apk_studio_architecture_guide.md"
+    ]
+}

@@ -1,0 +1,151 @@
+[
+    {
+        "id": "as_polisher",
+        "name": "The Polisher",
+        "nickname": "Robert",
+        "trigger_phrases": "",
+        "role_desc": "I fix grammar, remove filler words, and polish transcriptions silently.",
+        "prompt": "You are 'The Polisher'. Your job is to take raw voice transcriptions and make them professional and readable. 1. Remove filler words (um, ah, like, you know). 2. Fix grammar and punctuation. 3. Strip out trigger phrases like 'Hey Polisher' or 'Clean this up'.",
+        "model_override": "google\/gemini-3-flash-preview",
+        "temperature": 0.69999999999999996,
+        "commit_mode": "suggestion",
+        "is_active": 0,
+        "context_config": {
+            "food": false,
+            "folders": false,
+            "todo": false
+        },
+        "verbs_config": {
+            "REPLACE_TEXT": true,
+            "MOVE_FOLDER": false,
+            "CREATE_TODO": false,
+            "CREATE_NOTE": false,
+            "CREATE_FOOD": false,
+            "NOTIFY": false
+        },
+        "workflow_json": "",
+        "max_turns": 2
+    },
+    {
+        "id": "as_taskmaster",
+        "name": "Task Master",
+        "nickname": "Vicky",
+        "trigger_phrases": "add to list",
+        "role_desc": "I extract actionable tasks and suggest to-do list entries.",
+        "prompt": "You are the 'Task Master'. Your role is to identify specific tasks or reminders and extract them into your actions. Remove the task-request language from the note (e.g., remove 'Add to my list').",
+        "model_override": "google\/gemini-3-flash-preview",
+        "temperature": 0.20000000000000001,
+        "commit_mode": "suggestion",
+        "is_active": 1,
+        "context_config": {
+            "food_master": false,
+            "food_discovery": false,
+            "food_names": true,
+            "food_metrics": false,
+            "food_nutrition": false,
+            "folders": false,
+            "todo": true
+        },
+        "verbs_config": {
+            "REPLACE_TEXT": true,
+            "MOVE_FOLDER": false,
+            "CREATE_TODO": true,
+            "CREATE_NOTE": false,
+            "CREATE_FOOD": false,
+            "ADD_FOOD_LOG": false,
+            "NOTIFY": false
+        },
+        "workflow_json": "",
+        "max_turns": 2
+    },
+    {
+        "id": "as_filingclerk",
+        "name": "The Filing Clerk",
+        "nickname": "Mary",
+        "trigger_phrases": "",
+        "role_desc": "I analyze note content to suggest the best organizational folder.",
+        "prompt": "You are the 'Filing Clerk'. Analyze the note's intent and identify the most logical folder for it.",
+        "model_override": "google\/gemini-3-flash-preview",
+        "temperature": 0.20000000000000001,
+        "commit_mode": "suggestion",
+        "is_active": 0,
+        "context_config": {
+            "food": false,
+            "folders": true,
+            "todo": false
+        },
+        "verbs_config": {
+            "REPLACE_TEXT": false,
+            "MOVE_FOLDER": true,
+            "CREATE_TODO": false,
+            "CREATE_NOTE": false,
+            "CREATE_FOOD": false,
+            "NOTIFY": false
+        },
+        "workflow_json": "",
+        "max_turns": 2
+    },
+    {
+        "id": "as_nutritionist",
+        "name": "The Nutritionist",
+        "nickname": "Sandy",
+        "trigger_phrases": "nutrition label, calories, protein, i just had, i ate, \u5403\u4e86",
+        "role_desc": "I manage your food database and log your daily meals using agent-led discovery.",
+        "prompt": "You are 'The Nutritionist'. Your role is to manage the food database and log daily meals.\n\n1. LABEL NARRATION: When defining new items, ensure 'ref_amount_g' represents the weight of exactly ONE unit (piece, slice, etc) if applicable.\n2. MEAL LOGGING: To ensure matches in a bilingual database, split your DISCOVER queries into ATOMIC keywords in both English and Traditional Chinese (Taiwan).\n3. TEMPORAL LOGIC: Use 'CURRENT_TIME' to resolve relative dates. If logging in the 'wee hours' (00:00 - 05:00) for a late meal (e.g., 'dinner') without a specified date, log it for the PREVIOUS calendar day.",
+        "model_override": "google\/gemini-3-flash-preview",
+        "temperature": 0.20000000000000001,
+        "max_turns": 4,
+        "commit_mode": "suggestion",
+        "is_active": 1,
+        "context_config": {
+            "food_master": true,
+            "food_discovery": true,
+            "food_names": true,
+            "food_metrics": true,
+            "food_nutrition": true,
+            "folders": false,
+            "todo": false
+        },
+        "verbs_config": {
+            "REPLACE_TEXT": true,
+            "MOVE_FOLDER": false,
+            "CREATE_TODO": false,
+            "CREATE_NOTE": false,
+            "CREATE_FOOD": true,
+            "UPDATE_FOOD": true,
+            "ADD_FOOD_LOG_DB": true,
+            "ADD_FOOD_LOG_MANUAL": true,
+            "NOTIFY": false,
+            "WEB_SEARCH": true,
+            "DISCUSS": false
+        },
+        "workflow_json": ""
+    },
+    {
+        "id": "as_structurizer",
+        "name": "The Structurizer",
+        "nickname": "Arthur",
+        "trigger_phrases": "",
+        "role_desc": "I organize note streams by planting [SECTION_START] and [SECTION_END] markers based on voice commands.",
+        "prompt": "You are 'The Structurizer'. Your job is to detect when a user wants to create a collapsible section in their note stream. Look for triggers like 'Begin section' or 'End the section'.",
+        "model_override": "cognitivecomputations\/dolphin-mistral-24b-venice-edition:free",
+        "temperature": 0.69999999999999996,
+        "commit_mode": "suggestion",
+        "is_active": 1,
+        "context_config": {
+            "food": false,
+            "folders": true,
+            "todo": false
+        },
+        "verbs_config": {
+            "REPLACE_TEXT": true,
+            "MOVE_FOLDER": false,
+            "CREATE_TODO": false,
+            "CREATE_NOTE": true,
+            "CREATE_FOOD": false,
+            "NOTIFY": false
+        },
+        "workflow_json": "",
+        "max_turns": 2
+    }
+]

@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#050508"
+    tools:background="radial-gradient(circle at 50% 30%, #120c24 0%, #050508 100%)"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Header Badge -->
+        <LinearLayout
+            android:id="@+id/badge_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:layout_marginBottom="16dp"
+            tools:background="#1a6366f1"
+            tools:cornerRadius="100dp"
+            tools:boxShadow="inset 0 0 0 1px rgba(99,102,241,0.2)"
+            android:gravity="center_vertical">
+            
+            <View
+                android:id="@+id/badge_dot"
+                android:layout_width="5dp"
+                android:layout_height="5dp"
+                tools:background="#ff6366f1"
+                tools:cornerRadius="2.5dp"
+                android:layout_marginRight="8dp" />
+                
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AETHER INTERFACE"
+                android:textColor="#ff818cf8"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.05" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cosmos Utility"
+            android:textColor="#ffffff"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:letterSpacing="-0.02"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Calibrate tactile properties of your volumetric floating overlay."
+            android:textColor="#9ca3af"
+            android:textSize="13sp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Card 1: Floating Helper Toggle Row -->
+        <LinearLayout
+            android:id="@+id/card_daemon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            tools:background="#09090e"
+            tools:cornerRadius="16dp"
+            tools:boxShadow="inset 0 0 0 1px rgba(255,255,255,0.1)"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginRight="12dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Floating Helper"
+                    android:textColor="#ffffff"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="2dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Show dynamic orb overlay on viewport screen"
+                    android:textColor="#73ffffff"
+                    android:textSize="11sp" />
+                <TextView
+                    android:id="@+id/txt_service_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Status: Stopped"
+                    tools:text="🟢 Status: Running"
+                    tools:textColor="#34c759"
+                    android:textColor="#ff453a"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="6dp" />
+            </LinearLayout>
+
+            <Switch
+                android:id="@+id/switch_helper"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:background="#6366f1"
+                tools:cornerRadius="12dp" />
+        </LinearLayout>
+
+        <!-- Card 2: Orb Dimensional Scale -->
+        <LinearLayout
+            android:id="@+id/card_sizing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            tools:background="#09090e"
+            tools:cornerRadius="16dp"
+            tools:boxShadow="inset 0 0 0 1px rgba(255,255,255,0.1)"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Orb Dimensional Scale"
+                android:textColor="#ffffff"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="2dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Adjust spatial scale profile using custom CSS root variables"
+                android:textColor="#73ffffff"
+                android:textSize="11sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Radial Diameter"
+                    android:textColor="#99ffffff"
+                    android:textSize="11sp" />
+                <TextView
+                    android:id="@+id/txt_size_preview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="56px"
+                    android:textColor="#ff818cf8"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <SeekBar
+                android:id="@+id/seek_ball_size"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:layout_height="6dp"
+                tools:background="linear-gradient(90deg, #6366f1 0%, #6366f1 40%, #11ffffff 40%, #11ffffff 100%)"
+                tools:cornerRadius="3dp"
+                android:max="40"
+                android:progress="16"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp" />
+        </LinearLayout>
+
+        <!-- Card 3: Ambient Core Energy -->
+        <LinearLayout
+            android:id="@+id/card_glow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            tools:background="#09090e"
+            tools:cornerRadius="16dp"
+            tools:boxShadow="inset 0 0 0 1px rgba(255,255,255,0.1)"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ambient Core Energy"
+                android:textColor="#ffffff"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="2dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Calibrate volumetric intensity of drop-shadow light output"
+                android:textColor="#73ffffff"
+                android:textSize="11sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Glow Energy"
+                    android:textColor="#99ffffff"
+                    android:textSize="11sp" />
+                <TextView
+                    android:id="@+id/txt_glow_preview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1.0x"
+                    android:textColor="#ff818cf8"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <SeekBar
+                android:id="@+id/seek_ball_glow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:layout_height="6dp"
+                tools:background="linear-gradient(90deg, #6366f1 0%, #6366f1 50%, #11ffffff 50%, #11ffffff 100%)"
+                tools:cornerRadius="3dp"
+                android:max="20"
+                android:progress="10"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp" />
+        </LinearLayout>
+
+        <!-- Card 4: Emission Color Spectrum -->
+        <LinearLayout
+            android:id="@+id/card_spectrum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            tools:background="#09090e"
+            tools:cornerRadius="16dp"
+            tools:boxShadow="inset 0 0 0 1px rgba(255,255,255,0.1)"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Emission Color Spectrum"
+                android:textColor="#ffffff"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="2dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Shift structural lighting elements and physical tint variables"
+                android:textColor="#73ffffff"
+                android:textSize="11sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="12dp">
+                
+                <View
+                    android:id="@+id/dot_indigo"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginRight="10dp"
+                    tools:background="#6366f1"
+                    tools:cornerRadius="12dp"
+                    tools:boxShadow="0 0 0 2px #ffffff" />
+                <View
+                    android:id="@+id/dot_teal"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginRight="10dp"
+                    tools:background="#0ea5e9"
+                    tools:cornerRadius="12dp" />
+                <View
+                    android:id="@+id/dot_emerald"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginRight="10dp"
+                    tools:background="#10b981"
+                    tools:cornerRadius="12dp" />
+                <View
+                    android:id="@+id/dot_amber"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    tools:background="#f59e0b"
+                    tools:cornerRadius="12dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Card 5: Overlay Permission Split Row -->
+        <LinearLayout
+            android:id="@+id/card_permission"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            tools:background="#09090e"
+            tools:cornerRadius="16dp"
+            tools:boxShadow="inset 0 0 0 1px rgba(255,255,255,0.1)"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginRight="12dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Overlay Permission"
+                    android:textColor="#ffffff"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="2dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Allow UI write permissions over native applications"
+                    android:textColor="#73ffffff"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_permission"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Request"
+                tools:text="Granted"
+                tools:textColor="#10b981"
+                tools:background="#1410b981"
+                tools:cornerRadius="12dp"
+                tools:boxShadow="inset 0 0 0 1px rgba(16,185,129,0.2)"
+                android:textAllCaps="false"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:paddingLeft="14dp"
+                android:paddingRight="14dp"
+                android:minHeight="32dp"
+                android:minWidth="0dp" />
+        </LinearLayout>
+
+        <!-- Card 6: Physics Telemetry Console -->
+        <LinearLayout
+            android:id="@+id/card_telemetry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            tools:background="#09090e"
+            tools:cornerRadius="16dp"
+            tools:boxShadow="inset 0 0 0 1px rgba(255,255,255,0.1)"
+            android:padding="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Physics Telemetry Console"
+                    android:textColor="#59ffffff"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.05" />
+                    
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ONLINE"
+                    android:textColor="#10b981"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="6dp"
+                android:weightSum="2">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Velocity Engine"
+                    android:textColor="#66ffffff"
+                    android:textSize="12sp" />
+                <TextView
+                    android:id="@+id/txt_tel_velocity"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0.00 px/s"
+                    android:textColor="#ff818cf8"
+                    android:textSize="12sp"
+                    android:gravity="end" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="6dp"
+                android:weightSum="2">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Deformation Delta"
+                    android:textColor="#66ffffff"
+                    android:textSize="12sp" />
+                <TextView
+                    android:id="@+id/txt_tel_deformation"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0.0%"
+                    android:textColor="#ff818cf8"
+                    android:textSize="12sp"
+                    android:gravity="end" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="6dp"
+                android:weightSum="2">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Spatial Coordinates"
+                    android:textColor="#66ffffff"
+                    android:textSize="12sp" />
+                <TextView
+                    android:id="@+id/txt_tel_coords"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="X: 20px / Y: 250px"
+                    android:textColor="#ff818cf8"
+                    android:textSize="12sp"
+                    android:gravity="end" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="6dp"
+                android:weightSum="2">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Orb Constraint"
+                    android:textColor="#66ffffff"
+                    android:textSize="12sp" />
+                <TextView
+                    android:id="@+id/txt_tel_constraint"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Clamped"
+                    android:textColor="#ff818cf8"
+                    android:textSize="12sp"
+                    android:gravity="end" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Core Lumens System"
+                    android:textColor="#66ffffff"
+                    android:textSize="12sp" />
+                <TextView
+                    android:id="@+id/txt_tel_spectral"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Indigo Flare"
+                    android:textColor="#ff818cf8"
+                    android:textSize="12sp"
+                    android:gravity="end" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

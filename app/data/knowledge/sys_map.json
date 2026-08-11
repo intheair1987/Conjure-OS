@@ -1,0 +1,314 @@
+{
+    "__AI_PROTOCOL__": {
+        "DESCRIPTION": "This JSON represents the architectural dependency map of the system.",
+        "HOW_TO_READ": "KEY = File you want to modify. VALUE = Array of files that file depends on (providers).",
+        "JIT_MANDATE": "Before patching, lookup the target file in this map. If a dependency is missing from your context, you MUST request it.",
+        "EXPORT_PROTOCOL": "To retrieve a file, use #ACTION: export in a Protocol V8 block. No #FIND or #REPLACE needed.",
+        "EXPORT_EXAMPLE": "```text\n#PATCH_ID: [UNIQUE_ID]\n#FILE: [PATH_FROM_MAP]\n#ACTION: export\n#END\n```",
+        "NO_HALLUCINATION": "Never guess variable names or logic of missing files. Use the Export Protocol to see the truth."
+    },
+    "app/app.php": [
+        "app/data/demo-mode-private.json",
+        "app/data/demo/demo.db",
+        "app/data/theme-presets-config.json",
+        "app/data/timezone.json",
+        "app/data/ui-config.json",
+        "app/modules/header.php",
+        "apps/AtlasTrack/modules/settings.php",
+        "conjure.db"
+    ],
+    "app/plugins/FloatingCommandBar.php": [
+        "app/data/floating-recorder-config.json"
+    ],
+    "app/plugins/Onboarding.php": [
+        "app/data/onboarding-private.json"
+    ],
+    "app/plugins/ProjectPlanner.php": [
+        "app/data/knowledge/sys_map.json",
+        "app/data/knowledge/sys_map_apps-private.json",
+        "app/data/project-planner-config.json",
+        "app/data/ui-config.json"
+    ],
+    "app/plugins/ContextExporter.php": [
+        "app/data/context-exclusions-private.json",
+        "app/data/context-groups-private.json",
+        "app/data/context-layout-config.json",
+        "app/data/context-manual-extras-private.json",
+        "app/data/edit-log-config.json",
+        "app/data/edit-log.db",
+        "app/data/extra-exclusions-private.json",
+        "app/data/foundation-config.json",
+        "app/data/foundation-exclusions.json",
+        "app/data/knowledge/sys_map.json",
+        "app/data/knowledge/sys_map_apps-private.json",
+        "app/data/last-context-export.json",
+        "app/data/project-planner-config.json",
+        "apps/PointKeeper/manifest.json"
+    ],
+    "app/plugins/ProgressPill.php": [
+        "app/data/progress-pill-config.json"
+    ],
+    "app/plugins/FloatingRecorder.php": [
+        "app/data/floating-recorder-config.json",
+        "index.php"
+    ],
+    "app/plugins/SharedUI.php": [
+        "app/data/shared-ui-config.json",
+        "index.php"
+    ],
+    "app/plugins/ConjureCore.php": [
+        "app/data/backend-config.json",
+        "app/data/backend-private.json",
+        "app/data/openrouter-private.json",
+        "index.php"
+    ],
+    "app/plugins/OpenRouterAI.php": [
+        "app/data/openrouter-config.json",
+        "app/data/openrouter-private.json"
+    ],
+    "app/plugins/RemoteUpload.php": [
+        "app/data/ai-assistant-config.json",
+        "app/data/backend-config.json",
+        "app/data/backend-private.json",
+        "app/data/openrouter-private.json",
+        "app/data/timezone.json",
+        "index.php"
+    ],
+    "app/plugins/PluginOrganizer.php": [
+        "app/data/plugin-layout.json",
+        "app/data/ui-config.json"
+    ],
+    "app/plugins/Dashboard.php": [
+        "app/data/dashboard-layout.json",
+        "app/data/dashboard-tools-config.json",
+        "app/data/dashboard-visibility.json",
+        "app/data/page-order.json"
+    ],
+    "app/plugins/MigrationTool.php": [
+        "app/data/app-maker-config.json",
+        "app/data/backup-config.json",
+        "app/data/knowledge/sys_map.json",
+        "app/data/project-planner-config.json",
+        "app/data/ui-config.json",
+        "conjure.db",
+        "index.php"
+    ],
+    "app/plugins/InteractionTracker.php": [
+        "app/data/interaction-tracker-config.json"
+    ],
+    "app/plugins/Authentication.php": [
+        "app/data/authentication-private.json",
+        "index.php"
+    ],
+    "app/plugins/FitbitSync.php": [
+        "app/data/calorie-config.json",
+        "app/data/calorie-tracker/logs.db",
+        "app/data/fitbit/fitbit-private.json",
+        "app/data/fitbit/fitbit.db",
+        "app/data/fitbit/last-response-private.json",
+        "index.php"
+    ],
+    "app/plugins/ScrollableActionBar.php": [
+        "app/data/action-bar-order.json"
+    ],
+    "app/plugins/Stacks.php": [
+        "app/data/stacks-config.json"
+    ],
+    "app/plugins/PageLayout.php": [
+        "app/data/page-order.json"
+    ],
+    "app/plugins/ThemePresets.php": [
+        "app/data/theme-presets-config.json"
+    ],
+    "app/plugins/EditLog.php": [
+        "app/data/edit-log-config.json",
+        "app/data/edit-log-state.json",
+        "app/data/edit-log-timestamps-private.json",
+        "app/data/edit-log.db",
+        "index.php",
+        "recovery.php"
+    ],
+    "app/plugins/SecurityHardener.php": [
+        "app/api/backend.php",
+        "app/data/security-config.json",
+        "app/data/ui-config.json"
+    ],
+    "app/plugins/FontCustomizer.php": [
+        "app/data/font-config.json"
+    ],
+    "app/plugins/SmartInteractions.php": [
+        "app/data/smart-interactions-config.json"
+    ],
+    "app/plugins/SmartOrganizer.php": [
+        "app/data/smart-organizer-config.json"
+    ],
+    "app/plugins/RemovalIndicator.php": [
+        "app/data/removal-indicator-config.json",
+        "index.php"
+    ],
+    "app/plugins/PageTitleCustomizer.php": [
+        "app/data/page-title-config.json"
+    ],
+    "app/plugins/CalorieTracker.php": [
+        "app/data/calorie-config.json",
+        "app/data/calorie-tracker/logs.db",
+        "app/data/food-database/food.db",
+        "index.php"
+    ],
+    "app/plugins/LocationHistory.php": [
+        "app/data/location-history.json"
+    ],
+    "app/plugins/InteractionManager.php": [
+        "app/data/interaction-manager-config.json"
+    ],
+    "app/plugins/ViewCalendar.php": [
+        "app/data/calendar-plugin-config.json"
+    ],
+    "app/plugins/Backup.php": [
+        "app/data/app-maker-config.json",
+        "app/data/backup-config.json",
+        "app/data/backup-log.json",
+        "app/data/backup-private.json",
+        "app/data/demo/demo.db",
+        "app/data/edit-log-config.json",
+        "app/data/knowledge/sys_map.json",
+        "app/data/project-planner-config.json",
+        "app/data/ui-config.json",
+        "conjure.db"
+    ],
+    "app/plugins/AppGenerator.php": [
+        "index.php"
+    ],
+    "app/plugins/TranscriptionSound.php": [
+        "app/data/transcription-sound.json"
+    ],
+    "app/plugins/ArchiveHistory.php": [
+        "app/data/archive-history-config.json",
+        "app/data/archive-history-private.json"
+    ],
+    "app/plugins/TimezoneOverride.php": [
+        "app/data/timezone.json"
+    ],
+    "app/plugins/AnimationEngine.php": [
+        "app/data/animation-engine-config.json"
+    ],
+    "app/plugins/SequentialCopy.php": [
+        "app/data/seq-buckets.json"
+    ],
+    "app/plugins/DeletionProgress.php": [
+        "index.php"
+    ],
+    "app/plugins/VirtualScrolling.php": [
+        "app/data/virtual-scrolling-config.json"
+    ],
+    "app/plugins/SystemCheckpoint.php": [
+        "app/data/checkpoint-config.json",
+        "app/data/edit-log-state.json",
+        "apps/PWAStudio/data/batch_backups/1784182023/meta.json",
+        "recovery.php"
+    ],
+    "app/plugins/WordCounter.php": [
+        "app/data/word-counter-config.json"
+    ],
+    "app/plugins/CodeRefinery.php": [
+        "index.php"
+    ],
+    "app/plugins/LiveSyncPhantomFilter.php": [
+        "app/data/livesync-phantom-filter-config.json"
+    ],
+    "app/plugins/LabelOrganizer.php": [
+        "app/data/label-organizer-config.json"
+    ],
+    "app/plugins/FoodDatabase.php": [
+        "app/data/food-database/food.db"
+    ],
+    "app/plugins/DraftPad.php": [
+        "app/data/draftpad-config.json"
+    ],
+    "app/plugins/MacroDroidBridge.php": [
+        "app/data/macrodroid-config.json",
+        "app/data/macrodroid-private.json"
+    ],
+    "app/plugins/SearchAndReplace.php": [
+        "conjure.db",
+        "recovery.php"
+    ],
+    "app/plugins/AppMaker.php": [
+        "app/data/app-maker-config.json",
+        "apps/PointKeeper/manifest.json",
+        "index.php"
+    ],
+    "app/plugins/BacklogAuditor.php": [
+        "app/data/backlog-auditor-config.json",
+        "app/data/openrouter-private.json",
+        "index.php"
+    ],
+    "app/plugins/CodeAuditor.php": [
+        "app/data/code-auditor-config.json",
+        "app/data/ui-config.json"
+    ],
+    "app/plugins/FileVault.php": [
+        "index.php"
+    ],
+    "app/plugins/DemoMode.php": [
+        "app/data/demo-mode-private.json"
+    ],
+    "app/plugins/AiChat.php": [
+        "app/data/ai-chat/chats-private.db",
+        "app/data/ai-chat/custom-prompts-private.json",
+        "app/data/demo/demo.db",
+        "app/data/openrouter-private.json",
+        "apps/orbit/data/settings-private.json",
+        "conjure.db",
+        "index.php"
+    ],
+    "app/plugins/WebSearch.php": [
+        "app/data/web-search-config.json",
+        "app/data/web-search-private.json"
+    ],
+    "app/plugins/PatchHistory.php": [
+        "app/data/edit-log-state.json",
+        "app/data/patch-history-private.json"
+    ],
+    "app/modules/header.php": [
+        "index.php",
+        "recovery.php"
+    ],
+    "app/api/backend.php": [
+        "app/data/demo-mode-private.json",
+        "app/data/demo/demo.db",
+        "app/data/timezone.json",
+        "app/data/ui-config.json",
+        "conjure.db"
+    ],
+    "app/api/sc_logic_restore.php": [
+        "app/data/app-maker-config.json",
+        "app/data/patch-history-private.json",
+        "conjure.db",
+        "recovery.php"
+    ],
+    "app/api/sc_logic_bunker.php": [
+        "app/data/authentication-private.json",
+        "app/data/edit-log-state.json",
+        "apps/PWAStudio/data/batch_backups/1784182023/meta.json",
+        "index.php",
+        "recovery.php"
+    ],
+    "index.php": [
+        "app/paths.php",
+        "patcher.php",
+        "recovery.php"
+    ],
+    "patcher.php": [
+        "index.php"
+    ],
+    "recovery.php": [
+        "app/data/app-maker-config.json",
+        "app/data/authentication-private.json",
+        "app/data/edit-log-state.json",
+        "app/data/patch-history-private.json",
+        "apps/PWAStudio/data/batch_backups/1784182023/meta.json",
+        "conjure.db",
+        "index.php"
+    ]
+}

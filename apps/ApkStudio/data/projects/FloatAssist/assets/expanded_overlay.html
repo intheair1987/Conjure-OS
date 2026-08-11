@@ -1,0 +1,2335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+    #shortcutModal, #shortcutModal *, input, textarea {
+      user-select: text !important;
+      -webkit-user-select: text !important;
+      -webkit-touch-callout: default !important;
+    }
+    :root {
+      --transition-smooth: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+      --glass-bg: rgba(13, 13, 20, 0.85);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --amber-light: #f59e0b;
+    }
+    body {
+      background-color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden;
+      transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: podFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .control-pod {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border); border-radius: 32px; padding: 24px; width: 350px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: podScaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    body.is-closing {
+      opacity: 0 !important;
+    }
+    body.is-closing .control-pod {
+      opacity: 0 !important;
+      transform: scale(0.92) translateY(8px) !important;
+    }
+    @keyframes podFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes podScaleIn {
+      from { opacity: 0; transform: scale(0.92) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .pod-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .status-indicator { display: flex; align-items: center; gap: 8px; }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background-color: #10b981; box-shadow: 0 0 8px #10b981; animation: pulseDot 2s infinite ease-in-out; }
+    .status-text { font-size: 11px; font-weight: 600; letter-spacing: 1.2px; color: rgba(255, 255, 255, 0.4); text-transform: uppercase; }
+    .settings-btn { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 4px; border-radius: 8px; transition: var(--transition-smooth); }
+    .settings-btn:hover, .settings-btn:active { background: rgba(255, 255, 255, 0.1); transform: scale(1.08); }
+    .settings-btn.is-active { background: rgba(99, 102, 241, 0.25); }
+    .settings-btn.is-active .icon-settings { stroke: #818cf8; }
+    .icon-settings { width: 18px; height: 18px; stroke: rgba(255, 255, 255, 0.5); stroke-width: 1.75px; fill: none; transition: var(--transition-smooth); }
+    .settings-btn:hover .icon-settings { stroke: #ffffff; }
+    .tiles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .tiles-grid.primary-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .primary-grid .tile { padding: 12px 4px; gap: 6px; }
+    .primary-grid .icon-wrapper { width: 38px; height: 38px; }
+    .primary-grid .tile-label { font-size: 11px; }
+    .primary-grid .tile-status { font-size: 9.5px; }
+    .tile {
+      position: relative; background: rgba(255, 255, 255, 0.02);
+      border-top: 1px solid rgba(255, 255, 255, 0.1); border-bottom: 1px solid rgba(255, 255, 255, 0.02); border-left: 1px solid rgba(255, 255, 255, 0.04); border-right: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 20px; padding: 16px 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; outline: none; color: #ffffff; overflow: hidden;
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.08), inset 0 -1px 2px rgba(0, 0, 0, 0.5), 0 8px 16px rgba(0, 0, 0, 0.15);
+      transition: var(--transition-smooth);
+    }
+    .tile:active { transform: scale(0.95); }
+    .tile-light.is-active {
+      background: rgba(245, 158, 11, 0.04); border-top-color: rgba(245, 158, 11, 0.3); border-left-color: rgba(245, 158, 11, 0.1); border-right-color: rgba(245, 158, 11, 0.1); border-bottom-color: rgba(245, 158, 11, 0.05);
+      animation: tileBreathe 3s infinite ease-in-out;
+    }
+    .tile-light::before {
+      content: ''; position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(245, 158, 11, 0.12) 0%, rgba(245, 158, 11, 0) 80%); opacity: 0; transition: opacity 0.5s ease; pointer-events: none;
+    }
+    .tile-light.is-active::before { opacity: 1; }
+    .tile-close:active {
+      transform: scale(0.96, 0.90) translateY(1px); background: rgba(239, 68, 68, 0.15); box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+    }
+    .icon-wrapper {
+      position: relative; width: 44px; height: 44px; border-radius: 50%; background: rgba(255, 255, 255, 0.03); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.04); transition: var(--transition-smooth);
+    }
+    .icon-bulb, .icon-close { width: 20px; height: 20px; stroke: rgba(255, 255, 255, 0.7); stroke-width: 1.75px; fill: none; transition: var(--transition-smooth); }
+    .tile-light.is-active .icon-wrapper { background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.3); box-shadow: 0 0 15px rgba(245, 158, 11, 0.15); }
+    .tile-light.is-active .icon-bulb { stroke: var(--amber-light); fill: rgba(245, 158, 11, 0.1); filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.5)); }
+    .tile-label { font-size: 13px; font-weight: 500; letter-spacing: 0.3px; color: rgba(255, 255, 255, 0.9); transition: var(--transition-smooth); }
+    .tile-status { font-size: 11px; font-weight: 400; color: rgba(255, 255, 255, 0.4); margin-top: -2px; transition: var(--transition-smooth); }
+    .tile-light.is-active .tile-status { color: var(--amber-light); font-weight: 500; }
+    @keyframes pulseDot { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+    @keyframes tileBreathe { 0%, 100% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.12), inset 0 -1px 2px rgba(0, 0, 0, 0.5); border-color: rgba(245, 158, 11, 0.25); } 50% { box-shadow: 0 0 25px rgba(245, 158, 11, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2), inset 0 -1px 2px rgba(0, 0, 0, 0.4); border-color: rgba(245, 158, 11, 0.45); } }
+    .switch { position: relative; display: inline-block; width: 38px; height: 20px; cursor: pointer; flex-shrink: 0; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .switch-slider {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px; transition: all 0.25s ease;
+    }
+    .switch-slider::before {
+      content: ""; position: absolute; height: 14px; width: 14px; left: 2px; bottom: 2px;
+      background-color: #a1a1aa; border-radius: 50%; transition: all 0.25s ease;
+    }
+    .switch input:checked + .switch-slider { background: #6366f1; border-color: #6366f1; }
+    .switch input:checked + .switch-slider::before { transform: translateX(18px); background-color: #ffffff; }
+  </style>
+</head>
+<body>
+  <div id="podToast" style="display: none; position: fixed; top: calc(16px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%) translateY(-32px); background: rgba(18, 18, 26, 0.95); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 20px; padding: 8px 16px; font-size: 11px; font-weight: 600; color: #f5f5f7; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 500; pointer-events: none; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); opacity: 0; white-space: nowrap;">
+    <span id="podToastMsg">Close Pod with Dismiss button</span>
+  </div>
+
+  <div class="control-pod">
+    <div class="pod-header">
+      <div class="status-indicator"><span class="status-dot"></span><span class="status-text">System Pod</span></div>
+      <div style="display: flex; align-items: center; gap: 4px;">
+        <button class="settings-btn" id="toggleEditModeBtn" title="Edit Shortcuts">
+          <svg class="icon-settings" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+        </button>
+        <button class="settings-btn" id="openSettingsBtn" title="Open Settings">
+          <svg class="icon-settings" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        </button>
+      </div>
+    </div>
+    <!-- Unified System Shortcuts Grid -->
+    <div class="shortcuts-section">
+      <div class="tiles-grid" id="shortcutsGrid">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- APK Builder Section -->
+    <div class="apk-builder-section" style="margin-top: 16px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-border); border-radius: 20px; padding: 14px 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <span style="font-size: 11px; font-weight: 700; letter-spacing: 1px; color: rgba(255, 255, 255, 0.5); text-transform: uppercase;">APK Builder</span>
+        <button id="btnRefreshApps" title="Sync Apps" style="background: transparent; border: none; color: #818cf8; cursor: pointer; padding: 2px 4px; opacity: 0.85; transition: opacity 0.2s; display: flex; align-items: center; justify-content: center;">
+          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path><path d="M16 16h5v5"></path></svg>
+        </button>
+      </div>
+      
+      <!-- Custom Select Component (Full Width) -->
+      <div class="custom-select-container" id="customAppSelect" style="position: relative; width: 100%; margin-bottom: 10px;">
+        <div class="select-trigger" id="selectTrigger" style="display: flex; align-items: center; justify-content: space-between; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 12px; padding: 10px 12px; cursor: pointer; color: #ffffff; font-size: 12px;">
+          <span id="selectedAppText" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;">Connecting to ApkStudio...</span>
+          <svg id="selectChevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s; color: rgba(255,255,255,0.5); flex-shrink: 0; margin-left: 6px;"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        
+        <div class="select-options-list" id="selectOptionsList" style="display: none; position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: #12121a; border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 12px; max-height: 180px; overflow-y: auto; z-index: 200; box-shadow: 0 12px 30px rgba(0,0,0,0.8);">
+        </div>
+      </div>
+
+      <!-- Full Width Build Action Button -->
+      <button id="btnBuildTermux" style="width: 100%; background: rgba(99, 102, 241, 0.25); border: 1px solid rgba(99, 102, 241, 0.5); color: #ffffff; border-radius: 12px; padding: 10px 14px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);">
+        🚀 Build in Termux
+      </button>
+    </div>
+
+    <!-- Build Console Output Area -->
+    <div id="buildConsoleBox" style="display: none; margin-top: 12px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 12px; font-family: monospace; font-size: 11px; color: #e5e7eb;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span id="buildConsoleStatus" style="font-weight: 600; color: #f59e0b; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px;">BUILD CONSOLE</span>
+        <button id="btnCopyBuildConsole" style="background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(99, 102, 241, 0.4); color: #818cf8; font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 6px; cursor: pointer;">Copy Console</button>
+      </div>
+      <pre id="buildConsoleText" style="white-space: pre-wrap; word-break: break-all; max-height: 140px; overflow-y: auto; margin: 0; font-family: inherit; font-size: 10px; color: #d1d5db; line-height: 1.4;"></pre>
+    </div>
+
+    <!-- Patcher Response Output Area -->
+    <div id="patcherResultBox" style="display: none; margin-top: 16px; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 12px; font-family: monospace; font-size: 11px; color: #e5e7eb;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span id="patcherBoxStatus" style="font-weight: 600; color: #818cf8; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px;">Patcher Response</span>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button id="btnClearPatcherBox" title="Clear Response" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.5); font-size: 10px; font-weight: 600; padding: 3px 6px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+            <svg viewBox="0 0 24 24" width="11" height="11" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+          <button id="btnCopyPatcherReport" style="background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(99, 102, 241, 0.4); color: #818cf8; font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+            <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path></svg>
+            <span id="txtCopyReportLabel">Report</span>
+          </button>
+        </div>
+      </div>
+      <pre id="patcherOutputText" style="white-space: pre-wrap; word-break: break-all; max-height: 140px; overflow-y: auto; margin: 0; font-family: inherit; font-size: 10px; color: #d1d5db; line-height: 1.4;"></pre>
+    </div>
+
+    <!-- Affected / Unmatched Files Area -->
+    <div id="patcherFilesBox" style="display: none; margin-top: 10px; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 12px; font-family: monospace; font-size: 11px; color: #e5e7eb;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span id="patcherFilesHeader" style="font-weight: 600; color: #10b981; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px;">AFFECTED FILES</span>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button id="btnClearFilesBox" title="Clear Files List" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.5); font-size: 10px; font-weight: 600; padding: 3px 6px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+            <svg viewBox="0 0 24 24" width="11" height="11" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+          <button id="btnFetchFailedContext" style="display: none; background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.4); color: #f59e0b; font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 6px; cursor: pointer; align-items: center; gap: 4px;">
+            <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path></svg>
+            <span id="txtFetchContextLabel">Context (1)</span>
+          </button>
+        </div>
+      </div>
+      <div id="patcherFilesList" style="display: flex; flex-direction: column; gap: 4px; max-height: 120px; overflow-y: auto;"></div>
+    </div>
+  </div>
+
+  <!-- Shortcut Creator/Editor Modal -->
+  <div id="shortcutModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 300; justify-content: center; align-items: center; padding: calc(10px + env(safe-area-inset-top, 0px)) 16px 16px 16px;">
+    <div style="background: rgba(18, 18, 26, 0.95); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 24px; padding: 20px; width: 100%; max-width: 320px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span id="shortcutModalTitle" style="font-size: 13px; font-weight: 700; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px;">Add Custom Shortcut</span>
+        <button id="btnCloseShortcutModal" style="background: none; border: none; color: #a1a1aa; font-size: 16px; cursor: pointer; padding: 2px 6px;">✕</button>
+      </div>
+
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <div style="flex-shrink: 0; text-align: center;">
+          <label style="display: block; font-size: 10px; color: rgba(255,255,255,0.5); margin-bottom: 4px; font-weight: 600;">EMOJI</label>
+          <input type="text" id="inpShortcutEmoji" value="⚡" maxlength="2" style="width: 48px; height: 40px; text-align: center; font-size: 20px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; color: #fff; outline: none;">
+        </div>
+        <div style="flex: 1;">
+          <label style="display: block; font-size: 10px; color: rgba(255,255,255,0.5); margin-bottom: 4px; font-weight: 600;">SHORTCUT NAME</label>
+          <input type="text" id="inpShortcutName" placeholder="e.g. Flashlight Rule" style="width: 100%; height: 40px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 0 10px; color: #fff; font-size: 12px; outline: none;">
+        </div>
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 10px; color: rgba(255,255,255,0.5); margin-bottom: 4px; font-weight: 600;">SUBTITLE / DESCRIPTION</label>
+        <input type="text" id="inpShortcutDesc" placeholder="e.g. KeyMapper Trigger" style="width: 100%; height: 36px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 0 10px; color: #fff; font-size: 11px; outline: none;">
+      </div>
+
+      <!-- Action Tab Switcher (Tap vs Long Press) -->
+      <div style="display: flex; gap: 4px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); padding: 3px; border-radius: 12px;">
+        <button type="button" id="tabBtnTapAction" onclick="switchShortcutActionTab('tap')" style="flex: 1; padding: 8px 4px; font-size: 11px; font-weight: 700; border: none; background: rgba(99,102,241,0.3); color: #fff; border-radius: 9px; cursor: pointer; transition: all 0.2s;">
+          👆 Tap Action
+        </button>
+        <button type="button" id="tabBtnLongAction" onclick="switchShortcutActionTab('long')" style="flex: 1; padding: 8px 4px; font-size: 11px; font-weight: 700; border: none; background: transparent; color: rgba(255,255,255,0.5); border-radius: 9px; cursor: pointer; transition: all 0.2s;">
+          ⏱️ Long Press Action
+        </button>
+      </div>
+
+      <!-- Tab Pane: Tap Action -->
+      <div id="paneTapAction" style="display: flex; flex-direction: column; gap: 10px;">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <label style="font-size: 10px; color: rgba(255,255,255,0.5); font-weight: 600;">TAP COMMAND / URI / INTENT</label>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <button type="button" id="btnPasteTapCmd" title="Paste Clipboard" style="background: transparent; border: none; color: #34d399; cursor: pointer; padding: 2px; opacity: 0.85; transition: opacity 0.2s; display: flex; align-items: center; justify-content: center;">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path></svg>
+              </button>
+              <button type="button" id="btnCopyTapCmd" title="Select All & Copy" style="background: transparent; border: none; color: #a1a1aa; cursor: pointer; padding: 2px; opacity: 0.85; transition: opacity 0.2s; display: flex; align-items: center; justify-content: center;">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>
+              </button>
+              <button type="button" id="btnClearTapCmd" title="Clear Text" style="background: transparent; border: none; color: rgba(255,255,255,0.4); cursor: pointer; padding: 2px; opacity: 0.85; transition: opacity 0.2s; display: flex; align-items: center; justify-content: center;">
+                <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+          </div>
+          <textarea id="inpShortcutTapCmd" rows="3" placeholder='Command for single tap, e.g.: am broadcast -a com.conjure.keymapper.TRIGGER -p com.conjure.keymapper --es rule "flashlight"' style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 8px 10px; color: #34d399; font-family: monospace; font-size: 10px; outline: none; resize: none;"></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); padding: 8px 12px; border-radius: 12px;">
+          <div>
+            <div style="font-size: 11px; font-weight: 600; color: #f5f5f7;">Enable Tap Action</div>
+            <div style="font-size: 9px; color: rgba(255,255,255,0.4);">Execute command on single tap</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="chkShortcutTapEnabled" checked>
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); padding: 8px 12px; border-radius: 12px;">
+          <div>
+            <div style="font-size: 11px; font-weight: 600; color: #f5f5f7;">Auto-Close on Tap</div>
+            <div style="font-size: 9px; color: rgba(255,255,255,0.4);">Dismiss overlay after single tap action</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="chkShortcutTapAutoClose" checked>
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Tab Pane: Long Press Action -->
+      <div id="paneLongAction" style="display: none; flex-direction: column; gap: 10px;">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <label style="font-size: 10px; color: rgba(255,255,255,0.5); font-weight: 600;">LONG PRESS COMMAND / URI / INTENT (OPTIONAL)</label>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <button type="button" id="btnPasteLongCmd" title="Paste Clipboard" style="background: transparent; border: none; color: #60a5fa; cursor: pointer; padding: 2px; opacity: 0.85; transition: opacity 0.2s; display: flex; align-items: center; justify-content: center;">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path></svg>
+              </button>
+              <button type="button" id="btnCopyLongCmd" title="Select All & Copy" style="background: transparent; border: none; color: #a1a1aa; cursor: pointer; padding: 2px; opacity: 0.85; transition: opacity 0.2s; display: flex; align-items: center; justify-content: center;">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>
+              </button>
+              <button type="button" id="btnClearLongCmd" title="Clear Text" style="background: transparent; border: none; color: rgba(255,255,255,0.4); cursor: pointer; padding: 2px; opacity: 0.85; transition: opacity 0.2s; display: flex; align-items: center; justify-content: center;">
+                <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+          </div>
+          <textarea id="inpShortcutLongCmd" rows="3" placeholder='Command for long press (hold). Leave blank to open edit modal on hold.' style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 8px 10px; color: #60a5fa; font-family: monospace; font-size: 10px; outline: none; resize: none;"></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); padding: 8px 12px; border-radius: 12px;">
+          <div>
+            <div style="font-size: 11px; font-weight: 600; color: #f5f5f7;">Enable Long Press Action</div>
+            <div style="font-size: 9px; color: rgba(255,255,255,0.4);">Execute command on long press (500ms hold)</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="chkShortcutLongEnabled" checked>
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); padding: 8px 12px; border-radius: 12px;">
+          <div>
+            <div style="font-size: 11px; font-weight: 600; color: #f5f5f7;">Auto-Close on Long Press</div>
+            <div style="font-size: 9px; color: rgba(255,255,255,0.4);">Dismiss overlay after long press action</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="chkShortcutLongAutoClose" checked>
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Enable Entire Shortcut Toggle Switch Row -->
+      <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); padding: 8px 12px; border-radius: 12px;">
+        <div>
+          <div style="font-size: 11px; font-weight: 600; color: #f5f5f7;">Enable Entire Shortcut</div>
+          <div style="font-size: 9px; color: rgba(255,255,255,0.4);">Master tile activation toggle</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="chkShortcutEnabled" checked>
+          <span class="switch-slider"></span>
+        </label>
+      </div>
+
+      <div style="display: flex; gap: 8px; margin-top: 4px;">
+        <button id="btnDeleteShortcut" style="display: none; flex: 1; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; border-radius: 10px; padding: 10px; font-size: 11px; font-weight: 700; cursor: pointer;">Delete</button>
+        <button id="btnSaveShortcut" style="flex: 2; background: rgba(99, 102, 241, 0.3); border: 1px solid rgba(99, 102, 241, 0.6); color: #ffffff; border-radius: 10px; padding: 10px; font-size: 12px; font-weight: 700; cursor: pointer;">Save Shortcut</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Patcher Long-Press Context Menu Modal -->
+  <div id="patcherMenuModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 350; justify-content: center; align-items: center; padding: calc(10px + env(safe-area-inset-top, 0px)) 16px 16px 16px;">
+    <div style="background: rgba(18, 18, 26, 0.95); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 24px; padding: 20px; width: 100%; max-width: 320px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); display: flex; flex-direction: column; gap: 10px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+        <span style="font-size: 12px; font-weight: 700; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px;">⚡ Patcher Options</span>
+        <button id="btnClosePatcherMenu" style="background: none; border: none; color: #a1a1aa; font-size: 16px; cursor: pointer; padding: 2px 6px;">✕</button>
+      </div>
+
+      <button id="btnMenuExportFoundation" style="display: flex; align-items: center; justify-content: space-between; background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.35); border-radius: 14px; padding: 12px 14px; color: #ffffff; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 16px;">📄</span>
+          <div style="text-align: left;">
+            <div style="color: #ffffff; font-weight: 700;">Export Foundation Context</div>
+            <div style="font-size: 10px; color: rgba(255,255,255,0.5);">Download & copy foundation context</div>
+          </div>
+        </div>
+        <span style="font-size: 12px; color: #818cf8;">➔</span>
+      </button>
+
+      <button id="btnMenuQuickCheckpoint" style="display: flex; align-items: center; justify-content: space-between; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 14px; padding: 12px 14px; color: #ffffff; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 16px;">⚡</span>
+          <div style="text-align: left;">
+            <div style="color: #ffffff; font-weight: 700;">Create Quick Checkpoint</div>
+            <div style="font-size: 10px; color: rgba(255,255,255,0.5);">Differential system snapshot</div>
+          </div>
+        </div>
+        <span style="font-size: 12px; color: #34d399;">➔</span>
+      </button>
+
+      <button id="btnMenuMajorCheckpoint" style="display: flex; align-items: center; justify-content: space-between; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 14px; padding: 12px 14px; color: #ffffff; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 16px;">🛡️</span>
+          <div style="text-align: left;">
+            <div style="color: #ffffff; font-weight: 700;">Create Major Checkpoint</div>
+            <div style="font-size: 10px; color: rgba(255,255,255,0.5);">Full baseline snapshot</div>
+          </div>
+        </div>
+        <span style="font-size: 12px; color: #fbbf24;">➔</span>
+      </button>
+
+      <button id="btnMenuViewPendingLogs" style="display: flex; align-items: center; justify-content: space-between; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 14px; padding: 12px 14px; color: #ffffff; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 16px;">📝</span>
+          <div style="text-align: left;">
+            <div style="color: #ffffff; font-weight: 700;">View Pending Edit Logs</div>
+            <div style="font-size: 10px; color: rgba(255,255,255,0.5);">Unsecured system changes</div>
+          </div>
+        </div>
+        <span id="txtPendingLogsCountPill" style="font-size: 11px; font-weight: 800; background: #ef4444; color: #ffffff; padding: 2px 8px; border-radius: 10px;">0 Pending</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Isolated Worker Console Overlay Modal -->
+  <div id="workerConsoleModal" style="display: none; position: fixed; inset: 0; background: rgba(5, 5, 10, 0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); z-index: 400; flex-direction: column; padding: calc(10px + env(safe-area-inset-top, 0px)) 16px 16px 16px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 4px 12px 4px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 12px;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px #10b981;"></span>
+        <span id="workerModalTitle" style="font-size: 12px; font-weight: 800; color: #ffffff; text-transform: uppercase; letter-spacing: 0.8px;">SYSTEM WORKER CONSOLE</span>
+      </div>
+      <button id="btnCloseWorkerModal" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff; font-size: 11px; font-weight: 700; padding: 6px 14px; border-radius: 10px; cursor: pointer;">Close Console</button>
+    </div>
+    <div style="flex: 1; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); background: #000000; position: relative;">
+      <iframe id="workerConsoleIframe" style="width: 100%; height: 100%; border: none; background: #0d1117;"></iframe>
+    </div>
+  </div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const lightToggle = document.getElementById('lightToggle');
+    const conjureToggle = document.getElementById('conjureToggle');
+    const closePanel = document.getElementById('closePanel');
+    const openSettingsBtn = document.getElementById('openSettingsBtn');
+    const lightStatusText = document.getElementById('lightStatusText');
+    const patcherToggle = document.getElementById('patcherToggle');
+    const patcherResultBox = document.getElementById('patcherResultBox');
+    const patcherBoxStatus = document.getElementById('patcherBoxStatus');
+    const patcherOutputText = document.getElementById('patcherOutputText');
+    const btnCopyPatcherReport = document.getElementById('btnCopyPatcherReport');
+
+    const selectTrigger = document.getElementById('selectTrigger');
+    const selectedAppText = document.getElementById('selectedAppText');
+    const selectChevron = document.getElementById('selectChevron');
+    const selectOptionsList = document.getElementById('selectOptionsList');
+    const btnRefreshApps = document.getElementById('btnRefreshApps');
+    const btnBuildTermux = document.getElementById('btnBuildTermux');
+    const buildConsoleBox = document.getElementById('buildConsoleBox');
+    const buildConsoleStatus = document.getElementById('buildConsoleStatus');
+    const buildConsoleText = document.getElementById('buildConsoleText');
+    const btnCopyBuildConsole = document.getElementById('btnCopyBuildConsole');
+
+    let projectList = [];
+    let selectedProjectId = null;
+    let workingApkUrl = null;
+
+    function toggleSelectDropdown(forceClose) {
+      if (!selectOptionsList) return;
+      const isVisible = (selectOptionsList.style.display === 'block');
+      if (forceClose || isVisible) {
+        selectOptionsList.style.display = 'none';
+        if (selectChevron) selectChevron.style.transform = 'rotate(0deg)';
+      } else {
+        selectOptionsList.style.display = 'block';
+        if (selectChevron) selectChevron.style.transform = 'rotate(180deg)';
+      }
+    }
+
+    if (selectTrigger) {
+      selectTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleSelectDropdown();
+      });
+    }
+
+    document.addEventListener('click', (e) => {
+      const container = document.getElementById('customAppSelect');
+      if (container && !container.contains(e.target)) {
+        toggleSelectDropdown(true);
+      }
+    });
+
+    function selectProjectItem(p) {
+      selectedProjectId = p.id;
+      try {
+        localStorage.setItem('float_selected_app_id', p.id);
+        if (window.Service && typeof window.Service.saveSettingInt === 'function') {
+          window.Service.saveSettingInt('selected_app_id', p.id);
+        }
+      } catch(e) {}
+      if (selectedAppText) {
+        selectedAppText.innerHTML = `<strong style="color: #ffffff;">${p.name}</strong> <span style="color: rgba(255,255,255,0.5); font-size: 11px;">(${p.package_name})</span>`;
+      }
+    }
+
+    function renderAppSelect(projects) {
+      projectList = projects;
+      if (!selectOptionsList || !selectedAppText) return;
+
+      selectOptionsList.innerHTML = '';
+
+      if (!projects || projects.length === 0) {
+        selectedAppText.textContent = '(No projects found in ApkStudio)';
+        selectedProjectId = null;
+        return;
+      }
+
+      projects.forEach((p) => {
+        const item = document.createElement('div');
+        item.style.padding = '10px 12px';
+        item.style.borderBottom = '1px solid rgba(255, 255, 255, 0.05)';
+        item.style.cursor = 'pointer';
+        item.style.transition = 'background 0.15s';
+        item.style.display = 'flex';
+        item.style.flexDirection = 'column';
+        item.style.gap = '2px';
+
+        item.innerHTML = `
+          <div style="font-size: 12px; font-weight: 600; color: #ffffff;">${p.name}</div>
+          <div style="font-size: 10px; color: rgba(255,255,255,0.45); font-family: monospace;">${p.package_name}</div>
+        `;
+
+        item.addEventListener('mouseenter', () => item.style.background = 'rgba(99, 102, 241, 0.2)');
+        item.addEventListener('mouseleave', () => item.style.background = 'transparent');
+
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          selectProjectItem(p);
+          toggleSelectDropdown(true);
+        });
+
+        selectOptionsList.appendChild(item);
+      });
+
+      let savedId = null;
+      if (window.Service && typeof window.Service.getSettingInt === 'function') {
+        savedId = window.Service.getSettingInt('selected_app_id', 0);
+      }
+      if (!savedId) {
+        try {
+          savedId = parseInt(localStorage.getItem('float_selected_app_id'));
+        } catch(e) {}
+      }
+
+      const activeProj = projects.find(p => p.id === (selectedProjectId || savedId)) || projects[0];
+      selectProjectItem(activeProj);
+    }
+
+    async function loadApkProjects() {
+      if (selectedAppText && !selectedProjectId) {
+        selectedAppText.textContent = 'Connecting to ApkStudio...';
+      }
+
+      const baseUrls = getActiveBaseUrls();
+      const candidateUrls = [];
+
+      if (workingApkUrl) {
+        candidateUrls.push(workingApkUrl);
+      }
+
+      baseUrls.forEach(b => {
+        const u = `${b}/apps/ApkStudio/index.php?ajax=get_projects`;
+        if (!candidateUrls.includes(u)) candidateUrls.push(u);
+      });
+
+      let lastError = '';
+
+      for (const url of candidateUrls) {
+        try {
+          const res = await fetchWithTimeout(url, { method: 'GET' }, 2000);
+          if (res && (res.ok || res.status === 200)) {
+            const data = await res.json();
+            if (data.success && Array.isArray(data.projects)) {
+              workingApkUrl = url;
+              renderAppSelect(data.projects);
+              return;
+            }
+          } else {
+            lastError = `HTTP ${res ? res.status : 'No response'}`;
+          }
+        } catch(e) {
+          lastError = e.message || 'Fetch failed';
+        }
+      }
+
+      if (selectedAppText && !selectedProjectId) {
+        selectedAppText.textContent = `(Unable to connect: ${lastError})`;
+      }
+    }
+
+    if (btnRefreshApps) {
+      btnRefreshApps.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        btnRefreshApps.style.transform = 'rotate(180deg)';
+        btnRefreshApps.style.transition = 'transform 0.4s ease';
+        await loadApkProjects();
+        setTimeout(() => { btnRefreshApps.style.transform = ''; }, 400);
+      });
+    }
+
+    function saveBuildConsoleState() {
+      try {
+        const isVisible = buildConsoleBox && buildConsoleBox.style.display !== 'none';
+        localStorage.setItem('float_build_visible', isVisible ? '1' : '0');
+        localStorage.setItem('float_build_status', buildConsoleStatus ? buildConsoleStatus.textContent : '');
+        localStorage.setItem('float_build_color', buildConsoleStatus ? buildConsoleStatus.style.color : '');
+        localStorage.setItem('float_build_text', buildConsoleText ? buildConsoleText.textContent : '');
+      } catch(e) {}
+    }
+
+    function restoreBuildConsoleState() {
+      try {
+        const isVisible = localStorage.getItem('float_build_visible') === '1';
+        const text = localStorage.getItem('float_build_text');
+        if (isVisible && text && buildConsoleBox && buildConsoleText && buildConsoleStatus) {
+          buildConsoleStatus.textContent = localStorage.getItem('float_build_status') || 'BUILD CONSOLE';
+          buildConsoleStatus.style.color = localStorage.getItem('float_build_color') || '#f59e0b';
+          buildConsoleText.textContent = text;
+          buildConsoleBox.style.display = 'block';
+          buildConsoleText.scrollTop = buildConsoleText.scrollHeight;
+        }
+      } catch(e) {}
+    }
+
+    function savePatcherState(statusText, outputText, wrappedReport, statusColor, isVisible) {
+      try {
+        localStorage.setItem('float_patcher_visible', isVisible ? '1' : '0');
+        localStorage.setItem('float_patcher_status', statusText || '');
+        localStorage.setItem('float_patcher_output', outputText || '');
+        localStorage.setItem('float_patcher_wrapped', wrappedReport || '');
+        localStorage.setItem('float_patcher_color', statusColor || '');
+      } catch(e) {}
+    }
+
+    function restorePatcherState() {
+      try {
+        const isVisible = localStorage.getItem('float_patcher_visible') === '1';
+        if (isVisible && patcherResultBox && patcherOutputText && patcherBoxStatus) {
+          patcherBoxStatus.textContent = localStorage.getItem('float_patcher_status') || 'Patcher Response';
+          patcherBoxStatus.style.color = localStorage.getItem('float_patcher_color') || '#818cf8';
+          patcherOutputText.textContent = localStorage.getItem('float_patcher_output') || '';
+          currentReportWrapped = localStorage.getItem('float_patcher_wrapped') || '';
+          patcherResultBox.style.display = 'block';
+        }
+      } catch(e) {}
+    }
+
+    function appendConsoleLine(line) {
+      if (!buildConsoleText) return;
+      buildConsoleText.textContent += line + '\n';
+      buildConsoleText.scrollTop = buildConsoleText.scrollHeight;
+      saveBuildConsoleState();
+    }
+
+    async function triggerTermuxBuild() {
+      if (!selectedProjectId) return;
+
+      const proj = projectList.find(p => p.id === selectedProjectId);
+      if (!proj) return;
+
+      buildConsoleText.textContent = '';
+      buildConsoleBox.style.display = 'block';
+      buildConsoleStatus.textContent = 'BUILDING: ' + proj.name.toUpperCase();
+      buildConsoleStatus.style.color = '#f59e0b';
+
+      appendConsoleLine(`[SYSTEM POD] Target: ${proj.name} (${proj.package_name})`);
+      appendConsoleLine(`[SYSTEM POD] Session initialized. Console cleared.`);
+      appendConsoleLine(`[SYSTEM POD] Dispatching command to Termux...`);
+
+      let termuxSuccess = false;
+
+      // 1. Dispatch to Termux native bridge and verify result
+      if (window.Service && typeof window.Service.executeTermuxCommand === 'function') {
+        const result = window.Service.executeTermuxCommand(proj.build_command);
+        appendConsoleLine(`[SYSTEM POD] ${result}`);
+
+        if (result && result.startsWith('SUCCESS')) {
+          termuxSuccess = true;
+        } else {
+          appendConsoleLine(`\n[TERMUX SETUP REQUIRED]`);
+          appendConsoleLine(`1. In Termux terminal run: echo "allow-external-apps = true" >> ~/.termux/termux.properties && termux-reload-settings`);
+          appendConsoleLine(`2. In Android Settings -> Apps -> FloatAssist -> Permissions -> Enable "Run commands in Termux environment"`);
+        }
+      } else {
+        appendConsoleLine(`[SYSTEM POD] Notice: Native Termux bridge not active in web browser preview mode.`);
+      }
+
+      // If launched successfully into Termux, clear saved build console state and auto-dismiss System Pod overlay
+      if (termuxSuccess) {
+        try {
+          localStorage.setItem('float_build_visible', '0');
+          if (buildConsoleBox) buildConsoleBox.style.display = 'none';
+        } catch(e) {}
+
+        setTimeout(() => {
+          closeOverlay();
+        }, 300);
+        return;
+      }
+
+      // 2. Fallback: Connect to BuildKernel daemon if online and Termux bridge unavailable
+      try {
+        appendConsoleLine(`[SYSTEM POD] Checking for local BuildDaemon on port 8089...`);
+
+        const daemonPorts = [8089, 8090, 8091, 8092];
+        let activeDaemonPort = null;
+        for (const port of daemonPorts) {
+          try {
+            const checkRes = await fetchWithTimeout(`http://localhost:${port}/status`, { method: 'GET' }, 800);
+            if (checkRes && checkRes.ok) {
+              activeDaemonPort = port;
+              break;
+            }
+          } catch(e) {}
+        }
+
+        if (activeDaemonPort) {
+          appendConsoleLine(`[SYSTEM POD] Fetching project source archive...`);
+          const zipRes = await fetchWithTimeout(proj.download_url, { method: 'GET' }, 5000);
+          if (zipRes && zipRes.ok) {
+            const zipBlob = await zipRes.blob();
+            appendConsoleLine(`[SYSTEM POD] Connected to BuildDaemon on port ${activeDaemonPort}. Streaming build output...`);
+            const compileRes = await fetch(`http://localhost:${activeDaemonPort}/compile?name=${encodeURIComponent(proj.name)}`, {
+              method: 'POST',
+              body: zipBlob
+            });
+
+            if (compileRes && compileRes.ok) {
+              const reader = compileRes.body.getReader();
+              const decoder = new TextDecoder("UTF-8");
+              let buffer = '';
+              while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split('\n');
+                buffer = lines.pop();
+                for (const line of lines) {
+                  if (line.trim()) appendConsoleLine(line);
+                }
+              }
+              if (buffer.trim()) appendConsoleLine(buffer);
+              buildConsoleStatus.textContent = 'BUILD COMPLETE: ' + proj.name.toUpperCase();
+              buildConsoleStatus.style.color = '#10b981';
+              return;
+            }
+          }
+        }
+      } catch (err) {
+        appendConsoleLine(`[SYSTEM POD] Status: ${err.message}`);
+      }
+
+      buildConsoleStatus.textContent = 'DISPATCH FAILED';
+      buildConsoleStatus.style.color = '#ef4444';
+    }
+
+    if (btnBuildTermux) {
+      btnBuildTermux.addEventListener('click', (e) => {
+        e.stopPropagation();
+        triggerTermuxBuild();
+      });
+    }
+
+    if (btnCopyBuildConsole) {
+      btnCopyBuildConsole.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!buildConsoleText) return;
+        const text = buildConsoleText.textContent || '';
+        const formatted = "```text\n" + text.trim() + "\n```";
+
+        if (window.Service && typeof window.Service.copyToClipboard === 'function') {
+          window.Service.copyToClipboard(formatted);
+        } else if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(formatted);
+        }
+
+        const origText = btnCopyBuildConsole.textContent;
+        btnCopyBuildConsole.textContent = 'Copied!';
+        setTimeout(() => { btnCopyBuildConsole.textContent = origText; }, 1500);
+      });
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+    }
+
+    const defaultBuiltinShortcuts = [
+      { id: 'builtin_ambient', type: 'builtin', builtinId: 'ambient', name: 'Ambient', emoji: '💡', desc: 'Flashlight', enabled: true },
+      { id: 'builtin_conjure', type: 'builtin', builtinId: 'conjure', name: 'Conjure', emoji: '✨', desc: 'Launch OS', enabled: true },
+      { id: 'builtin_patcher', type: 'builtin', builtinId: 'patcher', name: 'Patcher', emoji: '🔧', desc: 'Run Clip', enabled: true },
+      { id: 'builtin_dismiss', type: 'builtin', builtinId: 'dismiss', name: 'Dismiss', emoji: '✕', desc: 'Close Pod', enabled: true }
+    ];
+
+    function loadCustomShortcutsArray() {
+      let shortcuts = [];
+      let loadedFromJava = false;
+
+      if (window.Service && typeof window.Service.getShortcutsJson === 'function') {
+        try {
+          const raw = window.Service.getShortcutsJson();
+          if (raw && raw !== '[]') {
+            shortcuts = JSON.parse(raw);
+            loadedFromJava = true;
+          }
+        } catch(e) {}
+      }
+
+      if (!loadedFromJava || !shortcuts || shortcuts.length === 0) {
+        try {
+          const localRaw = localStorage.getItem('float_custom_shortcuts');
+          if (localRaw) {
+            shortcuts = JSON.parse(localRaw);
+          }
+        } catch(e) {}
+      }
+
+      if (!Array.isArray(shortcuts)) shortcuts = [];
+
+      // Ensure built-in shortcuts exist in queue
+      const existingIds = shortcuts.map(s => s.id);
+      defaultBuiltinShortcuts.forEach((b, bIdx) => {
+        if (!existingIds.includes(b.id)) {
+          shortcuts.splice(bIdx, 0, { ...b });
+        }
+      });
+
+      return shortcuts;
+    }
+
+    window.moveShortcutOrder = function(id, direction) {
+      let shortcuts = loadCustomShortcutsArray();
+      const idx = shortcuts.findIndex(s => s.id === id);
+      if (idx === -1) return;
+      const targetIdx = idx + direction;
+      if (targetIdx < 0 || targetIdx >= shortcuts.length) return;
+
+      const temp = shortcuts[idx];
+      shortcuts[idx] = shortcuts[targetIdx];
+      shortcuts[targetIdx] = temp;
+
+      saveCustomShortcutsArray(shortcuts);
+      renderCustomShortcuts();
+    };
+
+    function saveCustomShortcutsArray(shortcuts) {
+      const jsonStr = JSON.stringify(shortcuts || []);
+      try {
+        localStorage.setItem('float_custom_shortcuts', jsonStr);
+      } catch(e) {}
+
+      if (window.Service && typeof window.Service.saveShortcutsJson === 'function') {
+        try {
+          window.Service.saveShortcutsJson(jsonStr);
+        } catch(e) {}
+      }
+    }
+
+    let isShortcutEditMode = false;
+    let editingShortcutId = null;
+    let activeActionTab = 'tap';
+
+    window.switchShortcutActionTab = function(tab) {
+      activeActionTab = tab || 'tap';
+      const btnTap = document.getElementById('tabBtnTapAction');
+      const btnLong = document.getElementById('tabBtnLongAction');
+      const paneTap = document.getElementById('paneTapAction');
+      const paneLong = document.getElementById('paneLongAction');
+
+      if (tab === 'tap') {
+        if (btnTap) { btnTap.style.background = 'rgba(99,102,241,0.3)'; btnTap.style.color = '#fff'; }
+        if (btnLong) { btnLong.style.background = 'transparent'; btnLong.style.color = 'rgba(255,255,255,0.5)'; }
+        if (paneTap) paneTap.style.display = 'flex';
+        if (paneLong) paneLong.style.display = 'none';
+      } else {
+        if (btnLong) { btnLong.style.background = 'rgba(99,102,241,0.3)'; btnLong.style.color = '#fff'; }
+        if (btnTap) { btnTap.style.background = 'transparent'; btnTap.style.color = 'rgba(255,255,255,0.5)'; }
+        if (paneLong) paneLong.style.display = 'flex';
+        if (paneTap) paneTap.style.display = 'none';
+      }
+    };
+
+    function renderCustomShortcuts() {
+      const container = document.getElementById('shortcutsGrid');
+      if (!container) return;
+      container.innerHTML = '';
+
+      let shortcuts = loadCustomShortcutsArray();
+      const visibleShortcuts = isShortcutEditMode ? shortcuts : shortcuts.filter(s => s.enabled !== false);
+
+      visibleShortcuts.forEach((s, idx) => {
+        const tile = document.createElement('button');
+        tile.className = 'tile tile-shortcut';
+        tile.setAttribute('data-id', s.id);
+
+        const isBuiltin = (s.type === 'builtin');
+        if (isBuiltin) tile.setAttribute('data-builtin', s.builtinId || s.id);
+
+        const isMasterEnabled = (s.enabled !== false);
+        const isTapActive = isMasterEnabled && (s.tapEnabled !== false) && !!(s.tapCmd || s.cmd);
+        const isLongActive = isMasterEnabled && (s.longPressEnabled !== false) && !!(s.longPressCmd && s.longPressCmd.trim());
+
+        if (!isMasterEnabled) {
+          tile.style.opacity = '0.45';
+          tile.style.border = '1px dashed rgba(255, 255, 255, 0.2)';
+        } else if (isShortcutEditMode) {
+          tile.style.borderColor = 'rgba(99, 102, 241, 0.4)';
+        }
+
+        let statusText = isMasterEnabled ? escapeHtml(s.desc || ((isTapActive && isLongActive) ? 'Tap / Hold' : (isLongActive ? 'Hold Only' : 'Shortcut'))) : 'Disabled';
+        if (isShortcutEditMode) {
+          statusText = isMasterEnabled ? 'Enabled' : 'Disabled';
+        }
+
+        let iconInner = escapeHtml(s.emoji || '⚡');
+        if (isBuiltin) {
+          if (s.builtinId === 'ambient') {
+            iconInner = `<svg class="icon-bulb" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke:rgba(255,255,255,0.8); stroke-width:1.8px; fill:none;"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1 .3 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path><line x1="9" y1="18" x2="15" y2="18"></line><line x1="10" y1="22" x2="14" y2="22"></line></svg>`;
+            if (!isShortcutEditMode && window.Service && typeof window.Service.isFlashlightOn === 'function' && window.Service.isFlashlightOn()) {
+              statusText = 'Active';
+              tile.classList.add('is-active');
+            } else if (!isShortcutEditMode) {
+              statusText = 'Off';
+            }
+          } else if (s.builtinId === 'conjure') {
+            iconInner = `<svg viewBox="0 0 24 24" style="width:18px; height:18px; stroke:#818cf8; stroke-width:1.8px; fill:rgba(99,102,241,0.15);" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"></path></svg>`;
+            if (!isShortcutEditMode) statusText = 'Launch OS';
+          } else if (s.builtinId === 'patcher') {
+            iconInner = `<svg class="icon-patcher" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke:rgba(255,255,255,0.8); stroke-width:1.8px; fill:none;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.4a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>`;
+            if (!isShortcutEditMode) statusText = 'Run Clip';
+          } else if (s.builtinId === 'dismiss') {
+            iconInner = `<svg class="icon-close" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke:rgba(255,255,255,0.8); stroke-width:1.8px; fill:none;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+            if (!isShortcutEditMode) statusText = 'Close Pod';
+          }
+        }
+
+        let patcherBadgeHtml = '';
+        if (isBuiltin && s.builtinId === 'patcher') {
+          patcherBadgeHtml = `<span id="patcherPendingBadge" style="display: none; position: absolute; top: 4px; right: 4px; background: #ef4444; color: #ffffff; font-size: 8.5px; font-weight: 800; padding: 1px 4px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 2px 6px rgba(0,0,0,0.4); z-index: 12;">0</span>`;
+        }
+
+        let reorderHtml = '';
+        if (isShortcutEditMode) {
+          reorderHtml = `
+            <div style="display: flex; justify-content: space-between; width: 100%; position: absolute; top: 3px; left: 0; right: 0; padding: 0 3px; z-index: 15; pointer-events: auto;">
+              ${idx > 0 ? `<button class="btn-reorder-left" onclick="event.stopPropagation(); window.moveShortcutOrder('${s.id}', -1)" style="background: rgba(99,102,241,0.5); border: none; color: #fff; font-size: 9px; font-weight: 800; border-radius: 5px; width: 18px; height: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;">◄</button>` : '<span></span>'}
+              ${idx < visibleShortcuts.length - 1 ? `<button class="btn-reorder-right" onclick="event.stopPropagation(); window.moveShortcutOrder('${s.id}', 1)" style="background: rgba(99,102,241,0.5); border: none; color: #fff; font-size: 9px; font-weight: 800; border-radius: 5px; width: 18px; height: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;">►</button>` : '<span></span>'}
+            </div>
+          `;
+        }
+
+        tile.innerHTML = `
+          ${reorderHtml}
+          ${patcherBadgeHtml}
+          <div class="icon-wrapper" style="font-size: 18px; ${!isMasterEnabled ? 'opacity: 0.6;' : ''}">
+            ${iconInner}
+          </div>
+          <span class="tile-label" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70px; ${!isMasterEnabled ? 'color: rgba(255,255,255,0.5);' : ''}">${escapeHtml(s.name)}</span>
+          <span class="tile-status" id="${s.builtinId === 'ambient' ? 'lightStatusText' : ''}" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px; ${!isMasterEnabled ? 'color: rgba(255,255,255,0.3);' : (s.builtinId === 'conjure' ? 'color:#818cf8;' : '')}">${statusText}</span>
+        `;
+
+        let pressTimer = null;
+        let isLongPressExecuted = false;
+
+        tile.addEventListener('pointerdown', (e) => {
+          isLongPressExecuted = false;
+          pressTimer = setTimeout(() => {
+            isLongPressExecuted = true;
+            if (navigator.vibrate) navigator.vibrate(35);
+
+            if (isShortcutEditMode) {
+              if (isBuiltin) {
+                let allShortcuts = loadCustomShortcutsArray();
+                const target = allShortcuts.find(item => item.id === s.id);
+                if (target) {
+                  target.enabled = (target.enabled === false);
+                  saveCustomShortcutsArray(allShortcuts);
+                  renderCustomShortcuts();
+                  if (window.showPodToast) {
+                    window.showPodToast(`${s.name} ${target.enabled ? 'Enabled' : 'Disabled'}`);
+                  }
+                }
+              } else {
+                openShortcutModal(s.id);
+              }
+            } else {
+              if (isBuiltin && s.builtinId === 'patcher') {
+                openPatcherMenuModal();
+              } else if (isLongActive) {
+                let res = 'Executed';
+                const activeLongCmd = s.longPressCmd.trim();
+                if (window.Service && typeof window.Service.executeSmartCommand === 'function') {
+                  res = window.Service.executeSmartCommand(activeLongCmd);
+                }
+
+                const isKeyMapper = activeLongCmd && (
+                  activeLongCmd.toLowerCase().includes('com.conjure.keymapper') ||
+                  activeLongCmd.toLowerCase().startsWith('keymapper://')
+                );
+
+                if (s.longPressAutoClose !== false) {
+                  closeOverlay();
+                } else {
+                  tile.style.transform = 'scale(0.92)';
+                  setTimeout(() => { tile.style.transform = ''; }, 150);
+                  if (window.showPodToast && !isKeyMapper) {
+                    const shortMsg = res && res.startsWith('SUCCESS') ? `${s.name} (Hold) Executed` : (res || 'Executed');
+                    window.showPodToast(shortMsg);
+                  }
+                }
+              } else if (!isBuiltin) {
+                openShortcutModal(s.id);
+              }
+            }
+          }, 500);
+        });
+
+        tile.addEventListener('pointerup', () => {
+          if (pressTimer) clearTimeout(pressTimer);
+        });
+
+        tile.addEventListener('pointerleave', () => {
+          if (pressTimer) clearTimeout(pressTimer);
+        });
+
+        tile.addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+        });
+
+        tile.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (isLongPressExecuted) {
+            isLongPressExecuted = false;
+            return;
+          }
+
+          // Strict Edit Mode Guard: Never trigger actions in Edit Mode
+          if (isShortcutEditMode) {
+            if (isBuiltin) {
+              let allShortcuts = loadCustomShortcutsArray();
+              const target = allShortcuts.find(item => item.id === s.id);
+              if (target) {
+                target.enabled = (target.enabled === false);
+                saveCustomShortcutsArray(allShortcuts);
+                renderCustomShortcuts();
+                if (window.showPodToast) {
+                  window.showPodToast(`${s.name} ${target.enabled ? 'Enabled' : 'Disabled'}`);
+                }
+              }
+            } else {
+              openShortcutModal(s.id);
+            }
+            return;
+          }
+
+          if (!isMasterEnabled) {
+            tile.style.transform = 'scale(0.95)';
+            setTimeout(() => { tile.style.transform = ''; }, 150);
+            if (window.showPodToast) {
+              window.showPodToast(`${s.name} is disabled`);
+            }
+            return;
+          }
+
+          // Execute Built-in or Custom Action
+          if (isBuiltin) {
+            if (s.builtinId === 'ambient') {
+              if (window.Service && typeof window.Service.toggleFlashlight === 'function') {
+                window.Service.toggleFlashlight();
+              }
+              setTimeout(() => {
+                window.syncFlashlight();
+                if (window.Service && typeof window.Service.isFlashlightOn === 'function') {
+                  const isOn = window.Service.isFlashlightOn();
+                  if (window.showPodToast) {
+                    window.showPodToast(isOn ? '💡 Ambient Light ON' : '💡 Ambient Light OFF');
+                  }
+                }
+              }, 50);
+            } else if (s.builtinId === 'conjure') {
+              if (window.Service && typeof window.Service.openConjureOs === 'function') {
+                window.Service.openConjureOs();
+              } else if (window.Service && typeof window.Service.executeSmartCommand === 'function') {
+                window.Service.executeSmartCommand('am start -n com.conjure.runtime/.MainActivity');
+                closeOverlay();
+              } else {
+                if (window.showPodToast) window.showPodToast('Opening Conjure OS...');
+                closeOverlay();
+              }
+            } else if (s.builtinId === 'patcher') {
+              runPatcherFromClipboard();
+            } else if (s.builtinId === 'dismiss') {
+              closeOverlay();
+            }
+          } else if (isTapActive) {
+            const activeTapCmd = s.tapCmd || s.cmd || '';
+            let res = 'Executed';
+            if (activeTapCmd && window.Service && typeof window.Service.executeSmartCommand === 'function') {
+              res = window.Service.executeSmartCommand(activeTapCmd);
+            }
+
+            const isKeyMapper = activeTapCmd && (
+              activeTapCmd.toLowerCase().includes('com.conjure.keymapper') ||
+              activeTapCmd.toLowerCase().startsWith('keymapper://')
+            );
+
+            const shouldAutoClose = (s.tapAutoClose !== undefined) ? s.tapAutoClose : (s.autoClose !== false);
+            if (shouldAutoClose) {
+              closeOverlay();
+            } else {
+              tile.style.transform = 'scale(0.92)';
+              setTimeout(() => { tile.style.transform = ''; }, 150);
+              if (window.showPodToast && !isKeyMapper) {
+                const shortMsg = res && res.startsWith('SUCCESS') ? `${s.name} Executed` : (res || 'Executed');
+                window.showPodToast(shortMsg);
+              }
+            }
+          } else {
+            tile.style.transform = 'scale(0.95)';
+            setTimeout(() => { tile.style.transform = ''; }, 150);
+            if (window.showPodToast) {
+              window.showPodToast(`Tap action disabled for ${s.name}`);
+            }
+          }
+        });
+
+        container.appendChild(tile);
+      });
+
+      if (isShortcutEditMode) {
+        const addTile = document.createElement('button');
+        addTile.className = 'tile tile-add-shortcut';
+        addTile.id = 'btnAddShortcut';
+        addTile.style.borderColor = 'rgba(99, 102, 241, 0.5)';
+        addTile.innerHTML = `
+          <div class="icon-wrapper" style="border-style: dashed; color: #818cf8; font-size: 18px; font-weight: 700;">
+            +
+          </div>
+          <span class="tile-label" style="color: #818cf8;">Shortcut</span>
+          <span class="tile-status">Add New</span>
+        `;
+        addTile.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openShortcutModal(null);
+        });
+
+        container.appendChild(addTile);
+      } else if (visibleShortcuts.length === 0) {
+        const emptyHint = document.createElement('div');
+        emptyHint.style.gridColumn = '1 / -1';
+        emptyHint.style.textAlign = 'center';
+        emptyHint.style.padding = '12px';
+        emptyHint.style.fontSize = '11px';
+        emptyHint.style.color = 'rgba(255,255,255,0.3)';
+        emptyHint.textContent = 'No active shortcuts. Tap edit button ✏️ above to manage.';
+        container.appendChild(emptyHint);
+      }
+    }
+
+    function openShortcutModal(id) {
+      editingShortcutId = id;
+      const modal = document.getElementById('shortcutModal');
+      const modalTitle = document.getElementById('shortcutModalTitle');
+      const btnDelete = document.getElementById('btnDeleteShortcut');
+      const inpEmoji = document.getElementById('inpShortcutEmoji');
+      const inpName = document.getElementById('inpShortcutName');
+      const inpDesc = document.getElementById('inpShortcutDesc');
+
+      if (!modal) return;
+      switchShortcutActionTab('tap');
+
+      if (id) {
+        let shortcuts = loadCustomShortcutsArray();
+        const target = shortcuts.find(s => s.id === id);
+        if (target) {
+          if (modalTitle) modalTitle.textContent = 'Edit Custom Shortcut';
+          if (inpEmoji) inpEmoji.value = target.emoji || '⚡';
+          if (inpName) inpName.value = target.name || '';
+          if (inpDesc) inpDesc.value = target.desc || '';
+
+          const inpTapCmd = document.getElementById('inpShortcutTapCmd');
+          if (inpTapCmd) inpTapCmd.value = target.tapCmd || target.cmd || '';
+
+          const chkTapEnabled = document.getElementById('chkShortcutTapEnabled');
+          if (chkTapEnabled) chkTapEnabled.checked = (target.tapEnabled !== false);
+
+          const chkTapAutoClose = document.getElementById('chkShortcutTapAutoClose');
+          if (chkTapAutoClose) chkTapAutoClose.checked = (target.tapAutoClose !== undefined) ? target.tapAutoClose : (target.autoClose !== false);
+
+          const inpLongCmd = document.getElementById('inpShortcutLongCmd');
+          if (inpLongCmd) inpLongCmd.value = target.longPressCmd || '';
+
+          const chkLongEnabled = document.getElementById('chkShortcutLongEnabled');
+          if (chkLongEnabled) chkLongEnabled.checked = (target.longPressEnabled !== undefined) ? target.longPressEnabled : !!(target.longPressCmd && target.longPressCmd.trim());
+
+          const chkLongAutoClose = document.getElementById('chkShortcutLongAutoClose');
+          if (chkLongAutoClose) chkLongAutoClose.checked = (target.longPressAutoClose !== false);
+
+          const chkEnabled = document.getElementById('chkShortcutEnabled');
+          if (chkEnabled) chkEnabled.checked = (target.enabled !== false);
+
+          if (btnDelete) btnDelete.style.display = 'block';
+        }
+      } else {
+        if (modalTitle) modalTitle.textContent = 'Add Custom Shortcut';
+        if (inpEmoji) inpEmoji.value = '⚡';
+        if (inpName) inpName.value = '';
+        if (inpDesc) inpDesc.value = '';
+
+        const inpTapCmd = document.getElementById('inpShortcutTapCmd');
+        if (inpTapCmd) inpTapCmd.value = '';
+
+        const chkTapEnabled = document.getElementById('chkShortcutTapEnabled');
+        if (chkTapEnabled) chkTapEnabled.checked = true;
+
+        const chkTapAutoClose = document.getElementById('chkShortcutTapAutoClose');
+        if (chkTapAutoClose) chkTapAutoClose.checked = true;
+
+        const inpLongCmd = document.getElementById('inpShortcutLongCmd');
+        if (inpLongCmd) inpLongCmd.value = '';
+
+        const chkLongEnabled = document.getElementById('chkShortcutLongEnabled');
+        if (chkLongEnabled) chkLongEnabled.checked = false;
+
+        const chkLongAutoClose = document.getElementById('chkShortcutLongAutoClose');
+        if (chkLongAutoClose) chkLongAutoClose.checked = true;
+
+        const chkEnabled = document.getElementById('chkShortcutEnabled');
+        if (chkEnabled) chkEnabled.checked = true;
+
+        if (btnDelete) btnDelete.style.display = 'none';
+      }
+
+      modal.style.display = 'flex';
+    }
+
+    function closeShortcutModal() {
+      const modal = document.getElementById('shortcutModal');
+      if (modal) modal.style.display = 'none';
+      editingShortcutId = null;
+    }
+
+    function saveShortcutFromModal() {
+      const emoji = (document.getElementById('inpShortcutEmoji').value || '⚡').trim();
+      const name = (document.getElementById('inpShortcutName').value || '').trim();
+      const desc = (document.getElementById('inpShortcutDesc').value || '').trim();
+
+      const tapCmd = (document.getElementById('inpShortcutTapCmd').value || '').trim();
+      const chkTapEnabled = document.getElementById('chkShortcutTapEnabled');
+      const tapEnabled = chkTapEnabled ? chkTapEnabled.checked : true;
+      const chkTapAutoClose = document.getElementById('chkShortcutTapAutoClose');
+      const tapAutoClose = chkTapAutoClose ? chkTapAutoClose.checked : true;
+
+      const longPressCmd = (document.getElementById('inpShortcutLongCmd').value || '').trim();
+      const chkLongEnabled = document.getElementById('chkShortcutLongEnabled');
+      const longPressEnabled = chkLongEnabled ? chkLongEnabled.checked : false;
+      const chkLongAutoClose = document.getElementById('chkShortcutLongAutoClose');
+      const longPressAutoClose = chkLongAutoClose ? chkLongAutoClose.checked : true;
+
+      const chkEnabled = document.getElementById('chkShortcutEnabled');
+      const enabled = chkEnabled ? chkEnabled.checked : true;
+
+      if (!name || (!tapCmd && !longPressCmd)) {
+        alert('Please enter a Shortcut Name and at least one action command (Tap or Long Press).');
+        return;
+      }
+
+      let shortcuts = loadCustomShortcutsArray();
+
+      const updatedObj = {
+        id: editingShortcutId || ('sc_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4)),
+        emoji,
+        name,
+        desc,
+        cmd: tapCmd || longPressCmd,
+        autoClose: tapAutoClose,
+        tapCmd,
+        tapEnabled,
+        tapAutoClose,
+        longPressCmd,
+        longPressEnabled,
+        longPressAutoClose,
+        enabled
+      };
+
+      if (editingShortcutId) {
+        const idx = shortcuts.findIndex(s => s.id === editingShortcutId);
+        if (idx >= 0) {
+          shortcuts[idx] = updatedObj;
+        }
+      } else {
+        shortcuts.push(updatedObj);
+      }
+
+      saveCustomShortcutsArray(shortcuts);
+      closeShortcutModal();
+      renderCustomShortcuts();
+    }
+
+    function deleteShortcutFromModal() {
+      if (!editingShortcutId) return;
+      let shortcuts = loadCustomShortcutsArray();
+      shortcuts = shortcuts.filter(s => s.id !== editingShortcutId);
+      saveCustomShortcutsArray(shortcuts);
+      closeShortcutModal();
+      renderCustomShortcuts();
+    }
+
+    const shortcutModal = document.getElementById('shortcutModal');
+    if (shortcutModal) {
+      shortcutModal.addEventListener('click', (e) => e.stopPropagation());
+    }
+
+    document.querySelectorAll('#shortcutModal input, #shortcutModal textarea').forEach(el => {
+      el.addEventListener('contextmenu', (e) => {
+        e.stopPropagation();
+      });
+    });
+
+    const btnPasteTapCmd = document.getElementById('btnPasteTapCmd');
+    if (btnPasteTapCmd) {
+      btnPasteTapCmd.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const inp = document.getElementById('inpShortcutTapCmd');
+        if (!inp) return;
+
+        let clipText = '';
+        if (window.Service && typeof window.Service.getClipboardText === 'function') {
+          clipText = window.Service.getClipboardText() || '';
+        } else if (navigator.clipboard && navigator.clipboard.readText) {
+          try { clipText = await navigator.clipboard.readText(); } catch(err) {}
+        }
+
+        if (clipText && clipText.trim()) {
+          inp.value = clipText.trim();
+          btnPasteTapCmd.style.color = '#10b981';
+          setTimeout(() => { btnPasteTapCmd.style.color = '#34d399'; }, 1000);
+        } else {
+          alert('Clipboard is empty.');
+        }
+      });
+    }
+
+    const btnPasteLongCmd = document.getElementById('btnPasteLongCmd');
+    if (btnPasteLongCmd) {
+      btnPasteLongCmd.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const inp = document.getElementById('inpShortcutLongCmd');
+        if (!inp) return;
+
+        let clipText = '';
+        if (window.Service && typeof window.Service.getClipboardText === 'function') {
+          clipText = window.Service.getClipboardText() || '';
+        } else if (navigator.clipboard && navigator.clipboard.readText) {
+          try { clipText = await navigator.clipboard.readText(); } catch(err) {}
+        }
+
+        if (clipText && clipText.trim()) {
+          inp.value = clipText.trim();
+          btnPasteLongCmd.style.color = '#10b981';
+          setTimeout(() => { btnPasteLongCmd.style.color = '#60a5fa'; }, 1000);
+        } else {
+          alert('Clipboard is empty.');
+        }
+      });
+    }
+
+    const btnCopyTapCmd = document.getElementById('btnCopyTapCmd');
+    if (btnCopyTapCmd) {
+      btnCopyTapCmd.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const inp = document.getElementById('inpShortcutTapCmd');
+        if (!inp || !inp.value.trim()) return;
+        inp.focus();
+        inp.select();
+        if (window.Service && typeof window.Service.copyToClipboard === 'function') {
+          window.Service.copyToClipboard(inp.value.trim());
+        } else if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(inp.value.trim());
+        }
+        btnCopyTapCmd.style.color = '#34d399';
+        setTimeout(() => { btnCopyTapCmd.style.color = '#a1a1aa'; }, 1000);
+      });
+    }
+
+    const btnClearTapCmd = document.getElementById('btnClearTapCmd');
+    if (btnClearTapCmd) {
+      btnClearTapCmd.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const inp = document.getElementById('inpShortcutTapCmd');
+        if (inp) inp.value = '';
+      });
+    }
+
+    const btnCopyLongCmd = document.getElementById('btnCopyLongCmd');
+    if (btnCopyLongCmd) {
+      btnCopyLongCmd.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const inp = document.getElementById('inpShortcutLongCmd');
+        if (!inp || !inp.value.trim()) return;
+        inp.focus();
+        inp.select();
+        if (window.Service && typeof window.Service.copyToClipboard === 'function') {
+          window.Service.copyToClipboard(inp.value.trim());
+        } else if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(inp.value.trim());
+        }
+        btnCopyLongCmd.style.color = '#60a5fa';
+        setTimeout(() => { btnCopyLongCmd.style.color = '#a1a1aa'; }, 1000);
+      });
+    }
+
+    const btnClearLongCmd = document.getElementById('btnClearLongCmd');
+    if (btnClearLongCmd) {
+      btnClearLongCmd.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const inp = document.getElementById('inpShortcutLongCmd');
+        if (inp) inp.value = '';
+      });
+    }
+    const btnCloseShortcutModal = document.getElementById('btnCloseShortcutModal');
+    if (btnCloseShortcutModal) {
+      btnCloseShortcutModal.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeShortcutModal();
+      });
+    }
+    const btnSaveShortcut = document.getElementById('btnSaveShortcut');
+    if (btnSaveShortcut) {
+      btnSaveShortcut.addEventListener('click', (e) => {
+        e.stopPropagation();
+        saveShortcutFromModal();
+      });
+    }
+    const btnDeleteShortcut = document.getElementById('btnDeleteShortcut');
+    if (btnDeleteShortcut) {
+      btnDeleteShortcut.addEventListener('click', (e) => {
+        e.stopPropagation();
+        deleteShortcutFromModal();
+      });
+    }
+    const tabBtnTapAction = document.getElementById('tabBtnTapAction');
+    if (tabBtnTapAction) {
+      tabBtnTapAction.addEventListener('click', (e) => {
+        e.stopPropagation();
+        window.switchShortcutActionTab('tap');
+      });
+    }
+    const tabBtnLongAction = document.getElementById('tabBtnLongAction');
+    if (tabBtnLongAction) {
+      tabBtnLongAction.addEventListener('click', (e) => {
+        e.stopPropagation();
+        window.switchShortcutActionTab('long');
+      });
+    }
+
+    function savePatcherFilesState(type, files) {
+      try {
+        localStorage.setItem('float_patcher_files_type', type || 'none');
+        localStorage.setItem('float_patcher_files_json', JSON.stringify(files || []));
+      } catch(e) {}
+    }
+
+    function restorePatcherFilesState() {
+      try {
+        const type = localStorage.getItem('float_patcher_files_type');
+        const jsonStr = localStorage.getItem('float_patcher_files_json');
+        if (type && type !== 'none' && jsonStr) {
+          const files = JSON.parse(jsonStr);
+          if (Array.isArray(files) && files.length > 0) {
+            renderAffectedFiles(type, files);
+          }
+        }
+      } catch(e) {}
+    }
+
+    function renderAffectedFiles(type, files) {
+      const box = document.getElementById('patcherFilesBox');
+      const list = document.getElementById('patcherFilesList');
+      const header = document.getElementById('patcherFilesHeader');
+      const btnFetch = document.getElementById('btnFetchFailedContext');
+      const txtFetchLabel = document.getElementById('txtFetchContextLabel');
+
+      if (!box || !list || !header) return;
+
+      if (!files || !Array.isArray(files) || files.length === 0) {
+        box.style.display = 'none';
+        list.innerHTML = '';
+        return;
+      }
+
+      const isSuccess = (type === 'success');
+      header.textContent = isSuccess ? 'UPDATED FILES' : 'UNMATCHED FILES';
+      header.style.color = isSuccess ? '#10b981' : '#f59e0b';
+
+      if (btnFetch && txtFetchLabel) {
+        if (!isSuccess) {
+          txtFetchLabel.textContent = `Context (${files.length})`;
+          btnFetch.style.display = 'flex';
+        } else {
+          btnFetch.style.display = 'none';
+        }
+      }
+
+      list.innerHTML = files.map((file) => `
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 4px 8px; font-size: 9.5px; font-family: monospace; color: #d1d5db; text-align: left; line-height: 1.25; overflow-wrap: anywhere; word-break: normal;">
+          ${escapeHtml(file).replace(/\//g, '/&#8203;')}
+        </div>
+      `).join('');
+
+      box.style.display = 'block';
+    }
+
+    function copyFilePath(filePath, btn) {
+      if (!filePath) return;
+      if (window.Service && typeof window.Service.copyToClipboard === 'function') {
+        window.Service.copyToClipboard(filePath);
+      } else if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(filePath);
+      }
+      if (btn) {
+        const span = btn.querySelector('span');
+        if (span) {
+          const orig = span.textContent;
+          span.textContent = 'Copied!';
+          setTimeout(() => { span.textContent = orig; }, 1200);
+        }
+      }
+    }
+
+    async function fetchSingleFileContext(filePath, btn) {
+      if (!filePath) return;
+      const span = btn ? btn.querySelector('span') : null;
+      const orig = span ? span.textContent : '';
+      if (span) span.textContent = 'Fetching...';
+
+      const exportBlock = `~~~Patcher Export: File Context\n#ACTION: file_export\n#PATCH_ID: export_file_0\n#FILE: ${filePath}\n#END\n~~~`;
+
+      const candidateUrls = getPatcherCandidateUrls();
+      let res = null;
+      for (const targetUrl of candidateUrls) {
+        try {
+          const fd = new FormData();
+          fd.append('plugin_action', 'cp_agent_execute');
+          fd.append('raw_input', exportBlock);
+
+          const response = await fetchWithTimeout(targetUrl, { method: 'POST', body: fd }, 5000);
+          if (response && (response.ok || response.status === 200)) {
+            res = response;
+            break;
+          }
+        } catch(e) {}
+      }
+
+      if (!res) {
+        if (span) span.textContent = 'Failed';
+        setTimeout(() => { if (span) span.textContent = orig; }, 1500);
+        return;
+      }
+
+      try {
+        const data = await res.json();
+        let exportedText = data.exported_content || data.message || 'Exported context';
+        if (data.status === 'exported') {
+          if (patcherBoxStatus) {
+            patcherBoxStatus.style.color = '#10b981';
+            patcherBoxStatus.textContent = 'CONTEXT EXPORTED';
+          }
+          if (patcherOutputText) patcherOutputText.textContent = exportedText;
+          currentReportWrapped = exportedText;
+
+          if (window.Service && typeof window.Service.copyToClipboard === 'function') {
+            window.Service.copyToClipboard(exportedText);
+          } else if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(exportedText);
+          }
+
+          savePatcherState('CONTEXT EXPORTED', exportedText, exportedText, '#10b981', true);
+          if (span) span.textContent = 'Copied!';
+          setTimeout(() => { if (span) span.textContent = orig; }, 1500);
+        } else {
+          if (span) span.textContent = 'Error';
+          setTimeout(() => { if (span) span.textContent = orig; }, 1500);
+        }
+      } catch(err) {
+        if (span) span.textContent = 'Error';
+        setTimeout(() => { if (span) span.textContent = orig; }, 1500);
+      }
+    }
+
+    // Restore saved DOM state for build console, patcher reports, and affected files
+    restorePatcherState();
+    restorePatcherFilesState();
+    restoreBuildConsoleState();
+
+    // Auto-load project list and custom shortcuts on overlay open
+    loadApkProjects();
+    renderCustomShortcuts();
+
+    window.syncFlashlight = function() {
+      if (window.Service && typeof window.Service.isFlashlightOn === 'function') {
+        const ambientTile = document.querySelector('[data-builtin="ambient"]');
+        const lightStatusText = document.getElementById('lightStatusText');
+        if (ambientTile) {
+          if (window.Service.isFlashlightOn()) {
+            ambientTile.classList.add('is-active');
+            if (lightStatusText) lightStatusText.textContent = 'Active';
+          } else {
+            ambientTile.classList.remove('is-active');
+            if (lightStatusText) lightStatusText.textContent = 'Off';
+          }
+        }
+      }
+    };
+    window.syncFlashlight();
+
+    if (conjureToggle) {
+      conjureToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (window.Service && typeof window.Service.openConjureOs === 'function') {
+          window.Service.openConjureOs();
+        } else if (window.Service && typeof window.Service.executeSmartCommand === 'function') {
+          window.Service.executeSmartCommand('am start -n com.conjure.runtime/.MainActivity');
+          closeOverlay();
+        } else {
+          if (window.showPodToast) window.showPodToast('Opening Conjure OS...');
+          closeOverlay();
+        }
+      });
+    }
+
+    let isClosingPod = false;
+
+    window.onPodExpand = function() {
+  isClosingPod = false;
+  closePatcherMenuModal();
+  closeShortcutModal();
+  document.body.classList.remove('is-closing');
+  document.body.style.animation = 'none';
+  void document.body.offsetHeight;
+  document.body.style.animation = 'podFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+
+  const podEl = document.querySelector('.control-pod');
+  if (podEl) {
+    podEl.style.animation = 'none';
+    void podEl.offsetHeight;
+    podEl.style.animation = 'podScaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+  }
+
+  loadApkProjects();
+  renderCustomShortcuts();
+  checkPendingEditLogs();
+};
+
+function closeOverlay(e) {
+  if (e && e.stopPropagation) e.stopPropagation();
+  if (isClosingPod) return;
+  isClosingPod = true;
+
+  closePatcherMenuModal();
+  closeShortcutModal();
+
+  document.body.classList.add('is-closing');if (window.Service && typeof window.Service.animateCollapse === 'function') {
+        window.Service.animateCollapse(250);
+      } else if (window.Service && typeof window.Service.closeConsole === 'function') {
+        setTimeout(() => {
+          window.Service.closeConsole();
+          document.body.classList.remove('is-closing');
+          isClosingPod = false;
+        }, 250);
+      }
+    }
+
+    window.closeOverlay = closeOverlay;
+
+    window.showPodToast = function(msg, durationMs = 2500) {
+      const toast = document.getElementById('podToast');
+      const toastMsg = document.getElementById('podToastMsg');
+      if (!toast || !toastMsg) return;
+
+      toastMsg.textContent = msg || '';
+      toast.style.display = 'block';
+
+      void toast.offsetWidth;
+
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+
+      if (window.podToastTimer) clearTimeout(window.podToastTimer);
+      window.podToastTimer = setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-50%) translateY(-32px)';
+        setTimeout(() => {
+          if (toast.style.opacity === '0') toast.style.display = 'none';
+        }, 300);
+      }, durationMs);
+    };
+
+    if (closePanel) {
+      closePanel.addEventListener('click', closeOverlay);
+    }
+
+    if (openSettingsBtn) {
+      openSettingsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (window.Service && typeof window.Service.openSettings === 'function') {
+          window.Service.openSettings();
+        }
+      });
+    }
+
+    const toggleEditModeBtn = document.getElementById('toggleEditModeBtn');
+    if (toggleEditModeBtn) {
+      toggleEditModeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        isShortcutEditMode = !isShortcutEditMode;
+        toggleEditModeBtn.classList.toggle('is-active', isShortcutEditMode);
+        renderCustomShortcuts();
+      });
+    }
+
+    let currentReportWrapped = '';
+
+async function fetchWithTimeout(url, options, timeoutMs = 4000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    clearTimeout(id);
+    return response;
+  } catch (err) {
+    clearTimeout(id);
+    throw err;
+  }
+}
+
+function getActiveBaseUrls() {
+  let isAutoDetect = true;
+  let isManual = false;
+  let manualHttps = 'https://127.0.0.1:8000';
+  let manualHttp = 'http://127.0.0.1:8001';
+
+  if (window.Service && typeof window.Service.getSettingInt === 'function') {
+    isAutoDetect = (window.Service.getSettingInt('auto_detect_urls', 1) === 1);
+    isManual = (window.Service.getSettingInt('manual_urls_enabled', 0) === 1);
+    manualHttps = window.Service.getSettingString('manual_https_url', 'https://127.0.0.1:8000');
+    manualHttp = window.Service.getSettingString('manual_http_url', 'http://127.0.0.1:8001');
+  }
+
+  const baseUrls = [];
+
+  if (isAutoDetect && window.Service && typeof window.Service.getRuntimeActiveJson === 'function') {
+    try {
+      const raw = window.Service.getRuntimeActiveJson();
+      if (raw && raw !== '{}') {
+        const manifest = JSON.parse(raw);
+        if (manifest.https_url) baseUrls.push(manifest.https_url.replace(/\/+$/, ''));
+        if (manifest.http_url) baseUrls.push(manifest.http_url.replace(/\/+$/, ''));
+      }
+    } catch(e) {}
+  }
+
+  if (isManual || baseUrls.length === 0) {
+    if (manualHttps) baseUrls.push(manualHttps.replace(/\/+$/, ''));
+    if (manualHttp) baseUrls.push(manualHttp.replace(/\/+$/, ''));
+  }
+
+  // Fallbacks
+  const fallbacks = ['https://127.0.0.1:8000', 'http://127.0.0.1:8001', 'http://127.0.0.1:8002'];
+  fallbacks.forEach(fb => {
+    if (!baseUrls.includes(fb)) baseUrls.push(fb);
+  });
+
+  return baseUrls;
+}
+
+function getPatcherCandidateUrls() {
+  const baseUrls = getActiveBaseUrls();
+  return baseUrls.map(b => `${b}/patcher.php`);
+}
+
+async function runPatcherFromClipboard() {
+  if (!patcherResultBox || !patcherBoxStatus || !patcherOutputText) return;
+  patcherResultBox.style.display = 'block';
+  patcherBoxStatus.style.color = '#818cf8';
+  patcherBoxStatus.textContent = 'READING CLIPBOARD...';
+  patcherOutputText.textContent = 'Fetching content from clipboard...';
+
+  try {
+    let clipText = '';
+    if (window.Service && typeof window.Service.getClipboardText === 'function') {
+      clipText = window.Service.getClipboardText() || '';
+    } else if (navigator.clipboard && navigator.clipboard.readText) {
+      try {
+        clipText = await navigator.clipboard.readText();
+      } catch(e) {}
+    }
+
+    if (!clipText || !clipText.trim()) {
+      patcherBoxStatus.style.color = '#ef4444';
+      patcherBoxStatus.textContent = 'CLIPBOARD EMPTY';
+      patcherOutputText.textContent = 'No text found in clipboard.';
+      return;
+    }
+
+    patcherBoxStatus.style.color = '#f59e0b';
+    patcherBoxStatus.textContent = 'EXECUTING PATCH...';
+
+    const candidateUrls = getPatcherCandidateUrls();
+    let res = null;
+    let attemptedLog = [];
+
+    for (const targetUrl of candidateUrls) {
+      patcherOutputText.textContent = `Connecting to ${targetUrl}...`;
+      try {
+        const fd = new FormData();
+        fd.append('plugin_action', 'cp_agent_execute');
+        fd.append('raw_input', clipText.trim());
+
+        const response = await fetchWithTimeout(targetUrl, { method: 'POST', body: fd }, 4000);
+        if (response && (response.ok || response.status === 200)) {
+          res = response;
+          break;
+        } else {
+          attemptedLog.push(`${targetUrl} -> HTTP ${response ? response.status : 'No Response'}`);
+        }
+      } catch(e) {
+        attemptedLog.push(`${targetUrl} -> ${e.name === 'AbortError' ? 'Timeout (4s)' : e.message}`);
+      }
+    }
+
+    if (!res) {
+      throw new Error('All Patcher API endpoints failed:\n' + attemptedLog.join('\n'));
+    }
+
+    const contentType = res.headers.get('content-type') || '';
+let responseReport = '';
+currentFailedFiles = [];
+
+if (contentType.includes('application/json')) {
+  const data = await res.json();
+  if (Array.isArray(data.failed_files) && data.failed_files.length > 0) {
+    currentFailedFiles = data.failed_files;
+    renderAffectedFiles('failed', currentFailedFiles);
+    savePatcherFilesState('failed', currentFailedFiles);
+  } else if (Array.isArray(data.success_files || data.files_updated) && (data.success_files || data.files_updated).length > 0) {
+    const successList = data.success_files || data.files_updated;
+    currentFailedFiles = [];
+    renderAffectedFiles('success', successList);
+    savePatcherFilesState('success', successList);
+  } else {
+    currentFailedFiles = [];
+    renderAffectedFiles('none', []);
+    savePatcherFilesState('none', []);
+  }
+
+  if (data.status === 'exported') {
+    responseReport = data.exported_content || data.message || 'Export complete';
+  } else if (data.status === 'audit_complete') {
+    responseReport = data.audit_report || data.message || 'Audit complete';
+  } else if (data.diagnostic_report) {
+    responseReport = data.diagnostic_report;
+  } else if (data.status === 'committed') {
+    responseReport = `STATUS: COMMITTED\nMessage: ${data.message || 'Batch applied'}\nFiles Updated: ${(data.files_updated || []).join(', ') || 'None'}`;
+  } else {
+    responseReport = `STATUS: ${(data.status || 'UNKNOWN').toUpperCase()}\nMessage: ${data.message || data.error || JSON.stringify(data)}`;
+  }
+} else {
+  responseReport = await res.text();
+}const btnFetchFailedContext = document.getElementById('btnFetchFailedContext');
+const txtFetchContextLabel = document.getElementById('txtFetchContextLabel');
+if (btnFetchFailedContext) {
+  if (currentFailedFiles.length > 0) {
+    if (txtFetchContextLabel) {
+      txtFetchContextLabel.textContent = `Context (${currentFailedFiles.length})`;
+    }
+    btnFetchFailedContext.style.display = 'flex';
+  } else {
+    btnFetchFailedContext.style.display = 'none';
+  }
+}if (responseReport.trim().startsWith('~~~~') && responseReport.trim().endsWith('~~~~')) {
+  currentReportWrapped = responseReport.trim();
+} else if (responseReport.trim().startsWith('~~~') && responseReport.trim().endsWith('~~~') && !responseReport.trim().slice(3, -3).includes('~~~')) {
+  currentReportWrapped = responseReport.trim();
+} else {
+  currentReportWrapped = '~~~~\n' + responseReport.trim() + '\n~~~~';
+}patcherBoxStatus.style.color = '#10b981';
+    patcherBoxStatus.textContent = 'PATCH COMPLETE';
+    patcherOutputText.textContent = currentReportWrapped;
+    savePatcherState('PATCH COMPLETE', currentReportWrapped, currentReportWrapped, '#10b981', true);
+
+    if (window.Service && typeof window.Service.copyToClipboard === 'function') {
+      window.Service.copyToClipboard(currentReportWrapped);
+    } else if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(currentReportWrapped);
+    }
+
+  } catch (err) {
+    currentReportWrapped = '~~~~\nERROR:\n' + err.message + '\n~~~~';
+    patcherBoxStatus.style.color = '#ef4444';
+    patcherBoxStatus.textContent = 'REQUEST FAILED';
+    patcherOutputText.textContent = currentReportWrapped;
+    savePatcherState('REQUEST FAILED', currentReportWrapped, currentReportWrapped, '#ef4444', true);
+
+    if (window.Service && typeof window.Service.copyToClipboard === 'function') {
+      window.Service.copyToClipboard(currentReportWrapped);
+    }
+  }
+}function openPatcherMenuModal() {
+  const modal = document.getElementById('patcherMenuModal');
+  if (modal) {
+    modal.style.display = 'flex';
+    checkPendingEditLogs();
+  }
+}
+
+function closePatcherMenuModal() {
+  const modal = document.getElementById('patcherMenuModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function openWorkerConsoleModal(action = 'create', name = 'QuickSave', forceMajor = false) {
+  const modal = document.getElementById('workerConsoleModal');
+  const iframe = document.getElementById('workerConsoleIframe');
+  const title = document.getElementById('workerModalTitle');
+  if (!modal || !iframe) return;
+
+  const baseUrls = getActiveBaseUrls();
+  const activeBase = baseUrls[0] || 'http://127.0.0.1:8001';
+  const cleanName = encodeURIComponent(name);
+  const workerUrl = `${activeBase}/app/api/checkpoint_worker.php?action=${action}&name=${cleanName}&force_major=${forceMajor ? '1' : '0'}&is_iframe=1`;
+
+  if (title) title.textContent = `WORKER CONSOLE: ${forceMajor ? 'MAJOR CHECKPOINT' : 'QUICK CHECKPOINT'}`;
+  iframe.src = workerUrl;
+  modal.style.display = 'flex';
+}
+
+function closeWorkerConsoleModal() {
+  const modal = document.getElementById('workerConsoleModal');
+  const iframe = document.getElementById('workerConsoleIframe');
+  if (iframe) iframe.src = 'about:blank';
+  if (modal) modal.style.display = 'none';
+  checkPendingEditLogs();
+}
+
+async function checkPendingEditLogs() {
+  const baseUrls = getActiveBaseUrls();
+  for (const bUrl of baseUrls) {
+    try {
+      const fd = new FormData();
+      fd.append('plugin_action', 'el_check_status');
+      const res = await fetchWithTimeout(`${bUrl}/index.php`, { method: 'POST', body: fd }, 2500);
+      if (res && res.ok) {
+        const data = await res.json();
+        if (data && data.status === 'success') {
+          const pendingCount = parseInt(data.pending_count) || 0;
+          updatePendingBadgeUI(pendingCount);
+          return pendingCount;
+        }
+      }
+    } catch(e) {}
+  }
+  return 0;
+}
+
+function updatePendingBadgeUI(count) {
+  const badge = document.getElementById('patcherPendingBadge');
+  const pill = document.getElementById('txtPendingLogsCountPill');
+  if (badge) {
+    if (count > 0) {
+      badge.textContent = count;
+      badge.style.display = 'block';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+  if (pill) {
+    pill.textContent = count > 0 ? `${count} Pending` : 'Secured';
+    pill.style.background = count > 0 ? '#ef4444' : '#10b981';
+  }
+}
+
+async function exportFoundationContext() {
+  closePatcherMenuModal();
+  if (patcherResultBox && patcherBoxStatus && patcherOutputText) {
+    patcherResultBox.style.display = 'block';
+    patcherBoxStatus.style.color = '#818cf8';
+    patcherBoxStatus.textContent = 'EXPORTING FOUNDATION...';
+    patcherOutputText.textContent = 'Fetching Foundation JIT Context bundle...';
+  }
+
+  const candidateUrls = getActiveBaseUrls();
+  let res = null;
+  let textContent = '';
+
+  for (const bUrl of candidateUrls) {
+    try {
+      const resRaw = await fetchWithTimeout(`${bUrl}/index.php?plugin_action=ce_download&type=foundation`, { method: 'GET' }, 5000);
+      if (resRaw && resRaw.ok) {
+        textContent = await resRaw.text();
+        if (textContent && textContent.length > 50) {
+          res = resRaw;
+          break;
+        }
+      }
+    } catch(e) {}
+  }
+
+  if (!res || !textContent) {
+    for (const targetUrl of getPatcherCandidateUrls()) {
+      try {
+        const fd = new FormData();
+        fd.append('plugin_action', 'cp_agent_execute');
+        fd.append('raw_input', "~~~Patcher Export: Foundation\n#ACTION: file_export\n#PATCH_ID: export_foundation_ctx\n#FILE: foundation\n#END\n~~~");
+        const response = await fetchWithTimeout(targetUrl, { method: 'POST', body: fd }, 5000);
+        if (response && response.ok) {
+          const data = await response.json();
+          if (data && data.exported_content) {
+            textContent = data.exported_content;
+            res = response;
+            break;
+          }
+        }
+      } catch(e) {}
+    }
+  }
+
+  if (res && textContent) {
+    if (patcherBoxStatus) {
+      patcherBoxStatus.style.color = '#10b981';
+      patcherBoxStatus.textContent = 'FOUNDATION EXPORTED';
+    }
+    if (patcherOutputText) patcherOutputText.textContent = textContent;
+    currentReportWrapped = textContent;
+
+    if (window.Service && typeof window.Service.copyToClipboard === 'function') {
+      window.Service.copyToClipboard(textContent);
+    } else if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(textContent);
+    }
+
+    savePatcherState('FOUNDATION EXPORTED', textContent, textContent, '#10b981', true);
+    if (window.showPodToast) window.showPodToast('📄 Foundation Context Exported & Copied');
+  } else {
+    if (patcherBoxStatus) {
+      patcherBoxStatus.style.color = '#ef4444';
+      patcherBoxStatus.textContent = 'EXPORT FAILED';
+    }
+    if (patcherOutputText) patcherOutputText.textContent = 'Unable to connect to Context Exporter API.';
+    if (window.showPodToast) window.showPodToast('⚠️ Foundation Export Failed');
+  }
+}
+
+async function viewPendingEditLogs() {
+  closePatcherMenuModal();
+  if (!patcherResultBox || !patcherBoxStatus || !patcherOutputText) return;
+
+  patcherResultBox.style.display = 'block';
+  patcherBoxStatus.style.color = '#ef4444';
+  patcherBoxStatus.textContent = 'PENDING EDIT LOGS';
+  patcherOutputText.textContent = 'Fetching pending edit logs...';
+
+  const baseUrls = getActiveBaseUrls();
+  let logs = [];
+  let maxTs = '1970-01-01 00:00:00';
+
+  for (const bUrl of baseUrls) {
+    try {
+      const fd = new FormData();
+      fd.append('plugin_action', 'el_get_log');
+      fd.append('limit', '50');
+      const res = await fetchWithTimeout(`${bUrl}/index.php`, { method: 'POST', body: fd }, 3000);
+      if (res && res.ok) {
+        const data = await res.json();
+        if (data && data.status === 'success') {
+          logs = data.log || [];
+          maxTs = data.checkpoint_max_ts || '1970-01-01 00:00:00';
+          break;
+        }
+      }
+    } catch(e) {}
+  }
+
+  const cpTime = new Date(maxTs.replace(' ', 'T')).getTime();
+  const pendingLogs = logs.filter(entry => {
+    const eTime = new Date(entry.date.replace(' ', 'T')).getTime();
+    return eTime > cpTime;
+  });
+
+  if (pendingLogs.length === 0) {
+    patcherBoxStatus.style.color = '#10b981';
+    patcherBoxStatus.textContent = 'SYSTEM FULLY SECURED';
+    patcherOutputText.textContent = 'No pending unsecured edit logs. System state is synced with latest checkpoint.';
+  } else {
+    const report = `~~~~ PENDING EDIT LOGS (${pendingLogs.length} Unsecured Changes) ~~~~\nCutoff Checkpoint: ${maxTs}\n\n` + 
+      pendingLogs.map((l, i) => `[${i + 1}] ${l.date}\n${l.summary}`).join('\n\n---\n\n') + '\n~~~~';
+
+    patcherOutputText.textContent = report;
+    currentReportWrapped = report;
+    if (window.Service && typeof window.Service.copyToClipboard === 'function') {
+      window.Service.copyToClipboard(report);
+    } else if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(report);
+    }
+  }
+}
+
+const patcherMenuModal = document.getElementById('patcherMenuModal');
+if (patcherMenuModal) {
+  patcherMenuModal.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (e.target === patcherMenuModal) {
+      closePatcherMenuModal();
+    }
+  });
+}
+
+const btnClosePatcherMenu = document.getElementById('btnClosePatcherMenu');
+if (btnClosePatcherMenu) {
+  btnClosePatcherMenu.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closePatcherMenuModal();
+  });
+}
+
+const btnMenuExportFoundation = document.getElementById('btnMenuExportFoundation');
+if (btnMenuExportFoundation) {
+  btnMenuExportFoundation.addEventListener('click', (e) => {
+    e.stopPropagation();
+    exportFoundationContext();
+  });
+}
+
+const btnMenuQuickCheckpoint = document.getElementById('btnMenuQuickCheckpoint');
+if (btnMenuQuickCheckpoint) {
+  btnMenuQuickCheckpoint.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closePatcherMenuModal();
+    openWorkerConsoleModal('create', 'QuickSave', false);
+  });
+}
+
+const btnMenuMajorCheckpoint = document.getElementById('btnMenuMajorCheckpoint');
+if (btnMenuMajorCheckpoint) {
+  btnMenuMajorCheckpoint.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closePatcherMenuModal();
+    openWorkerConsoleModal('create', 'MajorCheckpoint', true);
+  });
+}
+
+const btnMenuViewPendingLogs = document.getElementById('btnMenuViewPendingLogs');
+if (btnMenuViewPendingLogs) {
+  btnMenuViewPendingLogs.addEventListener('click', (e) => {
+    e.stopPropagation();
+    viewPendingEditLogs();
+  });
+}
+
+const btnCloseWorkerModal = document.getElementById('btnCloseWorkerModal');
+if (btnCloseWorkerModal) {
+  btnCloseWorkerModal.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeWorkerConsoleModal();
+  });
+}
+
+let patcherPressTimer = null;
+let isPatcherLongPress = false;
+
+if (patcherToggle) {
+  patcherToggle.addEventListener('pointerdown', (e) => {
+    isPatcherLongPress = false;
+    patcherPressTimer = setTimeout(() => {
+      isPatcherLongPress = true;
+      if (navigator.vibrate) navigator.vibrate(35);
+      openPatcherMenuModal();
+    }, 400);
+  });
+
+  patcherToggle.addEventListener('pointerup', () => {
+    if (patcherPressTimer) clearTimeout(patcherPressTimer);
+  });
+
+  patcherToggle.addEventListener('pointerleave', () => {
+    if (patcherPressTimer) clearTimeout(patcherPressTimer);
+  });
+
+  patcherToggle.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    openPatcherMenuModal();
+  });
+
+  patcherToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (isPatcherLongPress) {
+      isPatcherLongPress = false;
+      return;
+    }
+    runPatcherFromClipboard();
+  });
+}
+
+    if (btnCopyPatcherReport) {
+      btnCopyPatcherReport.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!currentReportWrapped) return;
+        if (window.Service && typeof window.Service.copyToClipboard === 'function') {
+          window.Service.copyToClipboard(currentReportWrapped);
+        } else if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(currentReportWrapped);
+        }
+        const lbl = document.getElementById('txtCopyReportLabel');
+        if (lbl) {
+          const origText = lbl.textContent;
+          lbl.textContent = 'Copied!';
+          setTimeout(() => { lbl.textContent = origText; }, 1500);
+        }
+      });
+    }
+
+    const btnClearPatcherBox = document.getElementById('btnClearPatcherBox');
+    if (btnClearPatcherBox) {
+      btnClearPatcherBox.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (patcherResultBox) patcherResultBox.style.display = 'none';
+        try {
+          localStorage.setItem('float_patcher_visible', '0');
+        } catch(err) {}
+      });
+    }
+
+    const btnClearFilesBox = document.getElementById('btnClearFilesBox');
+    if (btnClearFilesBox) {
+      btnClearFilesBox.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const box = document.getElementById('patcherFilesBox');
+        if (box) box.style.display = 'none';
+        try {
+          localStorage.setItem('float_patcher_files_type', 'none');
+          localStorage.setItem('float_patcher_files_json', '[]');
+        } catch(err) {}
+      });
+    }
+
+    let currentFailedFiles = [];
+
+    async function fetchUnmatchedFilesContext() {
+      if (!currentFailedFiles || currentFailedFiles.length === 0) return;
+      if (!patcherResultBox || !patcherBoxStatus || !patcherOutputText) return;
+
+      const btnFetch = document.getElementById('btnFetchFailedContext');
+      const txtFetchLabel = document.getElementById('txtFetchContextLabel');
+      const origText = txtFetchLabel ? txtFetchLabel.textContent : 'Context';
+      if (btnFetch && txtFetchLabel) {
+        txtFetchLabel.textContent = 'Fetching...';
+        btnFetch.disabled = true;
+      }
+
+      patcherBoxStatus.style.color = '#f59e0b';
+      patcherBoxStatus.textContent = 'FETCHING FILE CONTEXT...';
+      patcherOutputText.textContent = `Generating file_export payload for ${currentFailedFiles.length} file(s)...`;
+
+      const exportBlocks = currentFailedFiles.map((file, i) => {
+        return `~~~Patcher Export: Unmatched File Context\n#ACTION: file_export\n#PATCH_ID: export_fail_${i}\n#FILE: ${file}\n#END\n~~~`;
+      }).join('\n\n');
+
+      const candidateUrls = getPatcherCandidateUrls();
+
+      let res = null;
+      for (const targetUrl of candidateUrls) {
+        try {
+          const fd = new FormData();
+          fd.append('plugin_action', 'cp_agent_execute');
+          fd.append('raw_input', exportBlocks);
+
+          const response = await fetchWithTimeout(targetUrl, { method: 'POST', body: fd }, 5000);
+          if (response && (response.ok || response.status === 200)) {
+            res = response;
+            break;
+          }
+        } catch(e) {}
+      }
+
+      if (!res) {
+        patcherBoxStatus.style.color = '#ef4444';
+        patcherBoxStatus.textContent = 'EXPORT FAILED';
+        patcherOutputText.textContent = 'Unable to connect to Patcher API.';
+        if (btnFetch) {
+          btnFetch.textContent = origText;
+          btnFetch.disabled = false;
+        }
+        return;
+      }
+
+      try {
+        const data = await res.json();
+        let exportedText = data.exported_content || data.message || 'Exported context';
+        if (data.status === 'exported') {
+          patcherBoxStatus.style.color = '#10b981';
+          patcherBoxStatus.textContent = 'CONTEXT EXPORTED';
+          patcherOutputText.textContent = exportedText;
+          currentReportWrapped = exportedText;
+
+          if (window.Service && typeof window.Service.copyToClipboard === 'function') {
+            window.Service.copyToClipboard(exportedText);
+          } else if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(exportedText);
+          }
+
+          savePatcherState('CONTEXT EXPORTED', exportedText, exportedText, '#10b981', true);
+
+          if (txtFetchLabel) {
+            txtFetchLabel.textContent = 'Copied!';
+            setTimeout(() => {
+              txtFetchLabel.textContent = origText;
+            }, 1500);
+          }
+        } else {
+          patcherBoxStatus.style.color = '#ef4444';
+          patcherBoxStatus.textContent = 'EXPORT ERROR';
+          patcherOutputText.textContent = JSON.stringify(data, null, 2);
+        }
+      } catch(err) {
+        patcherBoxStatus.style.color = '#ef4444';
+        patcherBoxStatus.textContent = 'EXPORT ERROR';
+        patcherOutputText.textContent = err.message;
+      } finally {
+        if (btnFetch) {
+          btnFetch.disabled = false;
+        }
+        if (txtFetchLabel && txtFetchLabel.textContent === 'Fetching...') {
+          txtFetchLabel.textContent = origText;
+        }
+      }
+    }
+
+    const btnFetchFailedContext = document.getElementById('btnFetchFailedContext');
+    if (btnFetchFailedContext) {
+      btnFetchFailedContext.addEventListener('click', (e) => {
+        e.stopPropagation();
+        fetchUnmatchedFilesContext();
+      });
+    }
+
+    document.body.addEventListener('click', closeOverlay);
+
+    const podEl = document.querySelector('.control-pod');
+    if (podEl) {
+      podEl.addEventListener('click', (e) => e.stopPropagation());
+    }
+  });
+</script></body>
+</html>

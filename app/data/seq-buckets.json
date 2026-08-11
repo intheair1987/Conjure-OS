@@ -1,0 +1,10 @@
+{
+    "buckets": {
+        "b1": {
+            "id": "b1",
+            "name": "Bucket A",
+            "sequence": []
+        }
+    },
+    "activeBucketId": "b1"
+}

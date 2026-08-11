@@ -1,0 +1,11 @@
+{
+    "expand": true,
+    "include_apps": true,
+    "scroll_delay": 450,
+    "show_tool": false,
+    "include_disabled": true,
+    "include_data": true,
+    "exclude_apps": false,
+    "exclude_disabled": false,
+    "exclude_data": false
+}

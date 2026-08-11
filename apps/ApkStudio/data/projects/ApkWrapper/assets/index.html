@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ApkWrapper Builder</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Header & Toolbar -->
+  <div class="dash-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+    <div>
+      <h1 class="dash-title">ApkWrapper</h1>
+      <p class="dash-desc">Manage & compile native Android WebWrappers.</p>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button class="btn-icon" id="btnToggleLayout" onclick="toggleCatalogLayout()" title="Toggle Grid / List View">
+        <svg id="iconLayoutGrid" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <svg id="iconLayoutList" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      </button>
+      <button class="btn-icon" id="btnExportCatalog" onclick="exportCatalogBackup()" title="Export Catalog Backup">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </button>
+      <button class="btn-icon" id="btnImportCatalogTrigger" onclick="triggerCatalogImport()" title="Import Catalog Backup">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      </button>
+      <input type="file" id="inpImportCatalog" accept="*/*" style="display: none;">
+    </div>
+  </div>
+
+  <!-- Action Bar Grid -->
+  <div class="action-grid-bar">
+    <button class="btn-action-card btn-action-new" id="btnNewWrapper" onclick="openConfiguratorDrawer()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <span>New App</span>
+    </button>
+    <button class="btn-action-card btn-action-detect" id="btnAutoDetectApps" onclick="openAutoDetectDrawer()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <span>Auto-Detect</span>
+    </button>
+    <button class="btn-action-card btn-action-reinstall" id="btnReinstallAll" onclick="startBatchReinstall()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+      <span>Reinstall All</span>
+    </button>
+  </div>
+
+  <!-- Catalog Source Tabs -->
+  <div class="tab-toggles" style="margin-bottom: 14px;">
+    <button id="tabCatalogAll" class="active" onclick="switchCatalogTab('all')">
+      <span>All</span>
+      <span id="badgeCatalogAll" class="tab-badge">0</span>
+    </button>
+    <button id="tabCatalogAppMaker" onclick="switchCatalogTab('appmaker')">
+      <span>⚡ AppMaker</span>
+      <span id="badgeCatalogAppMaker" class="tab-badge">0</span>
+    </button>
+    <button id="tabCatalogOrbit" onclick="switchCatalogTab('orbit')">
+      <span>🪐 Orbit</span>
+      <span id="badgeCatalogOrbit" class="tab-badge">0</span>
+    </button>
+    <button id="tabCatalogManual" onclick="switchCatalogTab('manual')">
+      <span>✏️ Manual</span>
+      <span id="badgeCatalogManual" class="tab-badge">0</span>
+    </button>
+  </div>
+
+  <!-- Main Catalog Search & Sort Controls -->
+  <div style="margin-bottom: 16px; display: flex; gap: 8px; align-items: center;">
+    <input type="text" id="inpCatalogSearch" placeholder="Search catalog wrappers..." oninput="renderCatalog()" style="flex: 1; padding: 10px 14px; background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); border-radius: 10px; color: var(--text-primary); font-size: 13px; outline: none; font-family: var(--font-main);" autocapitalize="none" autocorrect="off" spellcheck="false">
+    <button class="btn-icon" id="btnSortCatalog" onclick="openSortMenu()" style="width: 42px; height: 42px; flex-shrink: 0; border-radius: 10px;" title="Sort Options">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
+    </button>
+  </div>
+
+  <!-- Catalog Sort Settings Overlay Modal -->
+  <div class="modal-overlay" id="catalogSortMenuOverlay" style="display:none;" onclick="closeSortMenu()">
+    <div class="modal-card" style="max-width: 320px; padding: 20px;" onclick="event.stopPropagation()">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color);">
+        <h3 style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 8px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
+          Sort App List
+        </h3>
+        <button class="btn-icon" style="width: 28px; height: 28px;" onclick="closeSortMenu()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <!-- Sort Mode Selection -->
+      <div style="margin-bottom: 16px;">
+        <label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">Sort By</label>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <button id="btnSortMode_time" class="btn-card-action" onclick="switchSortMode('time')" style="width: 100%; padding: 10px 14px; font-size: 13px; font-weight: 600; justify-content: flex-start; gap: 8px;">
+            <span>🕒 Creation / Import Time</span>
+          </button>
+          <button id="btnSortMode_alpha" class="btn-card-action" onclick="switchSortMode('alpha')" style="width: 100%; padding: 10px 14px; font-size: 13px; font-weight: 600; justify-content: flex-start; gap: 8px;">
+            <span>🔤 Alphabetical (A-Z)</span>
+          </button>
+          <button id="btnSortMode_installed" class="btn-card-action" onclick="switchSortMode('installed')" style="width: 100%; padding: 10px 14px; font-size: 13px; font-weight: 600; justify-content: flex-start; gap: 8px;">
+            <span>✓ Installation Status</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Sort Direction Selection -->
+      <div>
+        <label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">Order Direction</label>
+        <div class="tab-toggles" style="display: flex; gap: 8px;">
+          <button id="btnSortOrder_asc" onclick="switchSortOrder('asc')" style="flex: 1; padding: 10px; font-size: 13px; font-weight: 600;">
+            Regular (Asc)
+          </button>
+          <button id="btnSortOrder_desc" onclick="switchSortOrder('desc')" style="flex: 1; padding: 10px; font-size: 13px; font-weight: 600;">
+            Reversed (Desc)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Batch Progress Status Banner -->
+  <div id="batchProgressBanner" class="dash-card" style="display:none; margin-bottom: 20px; border-color: rgba(99, 102, 241, 0.4); background: rgba(99, 102, 241, 0.08);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+      <span style="font-size: 13px; font-weight: 700; color: var(--primary-accent); display: flex; align-items: center; gap: 6px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+        Batch Queue Active
+      </span>
+      <button class="btn-card-action btn-card-delete" onclick="cancelBatchReinstall()" style="font-size: 11px; padding: 2px 8px;">Cancel</button>
+    </div>
+    <div id="batchStatusText" style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; font-family: var(--font-mono);">
+      Preparing queue...
+    </div>
+    <div class="progress-bar-wrap" style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+      <div id="batchProgressBar" style="width: 0%; height: 100%; background: var(--primary-accent); transition: width 0.3s ease;"></div>
+    </div>
+  </div>
+
+  <!-- Catalog Container -->
+  <div id="catalogContainer" class="catalog-grid">
+    <!-- Dynamic Wrapper App Cards render here -->
+  </div>
+
+  <!-- Empty Catalog State -->
+  <div id="emptyCatalogState" class="empty-state" style="display:none;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.4; margin-bottom: 12px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    <h3 style="font-size:16px; margin-bottom:4px;">No Saved Wrappers</h3>
+    <p style="font-size:13px; color:var(--text-secondary);">Tap "New WebWrapper" above to add your first application.</p>
+  </div>
+
+  <!-- Sticky Bottom Terminal Output Console -->
+  <div class="terminal-card collapsed" id="terminalCard">
+    <div class="terminal-header" onclick="toggleTerminal()">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-family: var(--font-main); font-weight: 700; color: var(--text-primary); text-transform: uppercase;">Compiler Output</span>
+        <span id="terminalStatusPill" class="terminal-pill idle">Idle</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <button id="btnCopyLog" onclick="event.stopPropagation(); copyCompilerOutput()" style="background: none; border: none; color: var(--primary-accent); font-size: 11px; font-weight: bold; cursor: pointer; text-transform: uppercase; padding: 2px 6px;">Copy</button>
+        <button id="btnToggleTerminal" onclick="event.stopPropagation(); toggleTerminal()" class="btn-icon" style="width: 24px; height: 24px; border: none; background: transparent;" title="Toggle Console">
+          <svg id="iconTerminalChevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s;"><polyline points="18 15 12 9 6 15"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="terminal-body" id="terminalOutput">Awaiting instructions...</div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Custom Glassmorphic Modal Dialog -->
+  <div class="modal-overlay" id="modalDialogOverlay" style="display:none;">
+    <div class="modal-card">
+      <h3 class="modal-title" id="modalDialogTitle">Notice</h3>
+      <p class="modal-message" id="modalDialogMessage"></p>
+      <div class="modal-actions" id="modalDialogActions"></div>
+    </div>
+  </div>
+
+  <!-- Catalog Long-Press Context Menu Overlay Modal -->
+  <div class="modal-overlay" id="catalogContextMenuOverlay" style="display:none;" onclick="closeCatalogContextMenu()">
+    <div class="modal-card" style="max-width: 320px; padding: 18px;" onclick="event.stopPropagation()">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color);">
+        <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+          <img id="ctxMenuIcon" src="templates/package.svg" style="width: 36px; height: 36px; border-radius: 8px; object-fit: contain; background: #000; padding: 4px; border: 1px solid var(--border-color); flex-shrink: 0;">
+          <div style="min-width: 0;">
+            <div id="ctxMenuTitle" style="font-size: 14px; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">App Name</div>
+            <div id="ctxMenuSub" style="font-size: 11px; color: var(--text-secondary); font-family: var(--font-mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">com.package</div>
+          </div>
+        </div>
+        <button class="btn-icon" style="width: 28px; height: 28px; flex-shrink: 0;" onclick="closeCatalogContextMenu()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <button class="btn-card-action btn-card-compile" onclick="triggerCtxMenuAction('build')" style="padding: 10px 14px; font-size: 13px; font-weight: 600; justify-content: flex-start; gap: 8px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Build & Install
+        </button>
+        <button class="btn-card-action" onclick="triggerCtxMenuAction('edit')" style="padding: 10px 14px; font-size: 13px; font-weight: 600; justify-content: flex-start; gap: 8px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          Edit Settings
+        </button>
+        <button class="btn-card-action" onclick="triggerCtxMenuAction('select')" style="padding: 10px 14px; font-size: 13px; font-weight: 600; justify-content: flex-start; gap: 8px; color: #38bdf8;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          Select (Batch Mode)
+        </button>
+        <button class="btn-card-action" onclick="triggerCtxMenuAction('uninstall')" style="padding: 10px 14px; font-size: 13px; font-weight: 600; justify-content: flex-start; gap: 8px; color: #f87171;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v10"/><path d="M18.4 6.6a9 9 0 1 1-12.77 0"/></svg>
+          Uninstall App
+        </button>
+        <button class="btn-card-action btn-card-delete" onclick="triggerCtxMenuAction('delete')" style="padding: 10px 14px; font-size: 13px; font-weight: 600; justify-content: flex-start; gap: 8px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/></svg>
+          Delete App
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Lower-Right Batch Action Bar -->
+  <div id="catalogBatchFloatingBar" class="floating-batch-bar" style="display: none;">
+    <!-- Top Header Row: Count Pill + Select All Pill (Left), Circular Close Button (Right) -->
+    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span id="txtBatchSelectionCount" class="batch-pill-count">0 Selected</span>
+        <button id="btnSelectAllCatalog" class="batch-pill-btn" onclick="toggleSelectAllCatalogProjects()">Select All</button>
+      </div>
+      <button class="batch-close-circle" onclick="exitCatalogSelectionMode()" title="Exit Selection Mode">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- Action Buttons Row -->
+    <div style="display: flex; gap: 8px; width: 100%; align-items: center;">
+      <button class="btn-card-action btn-card-compile" onclick="runBatchSelectionBuild()" style="flex: 1; padding: 10px 12px; font-weight: 600; justify-content: center;" title="Build Selected Apps">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Build
+      </button>
+      <button class="btn-card-action" onclick="runBatchSelectionUninstall()" style="flex: 1; padding: 10px 12px; font-weight: 600; color: #f87171; border-color: rgba(239, 68, 68, 0.35); justify-content: center;" title="Uninstall Selected Apps">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v10"/><path d="M18.4 6.6a9 9 0 1 1-12.77 0"/></svg>
+        Uninstall
+      </button>
+      <button class="btn-card-action btn-card-delete" onclick="runBatchSelectionDelete()" style="flex: 1; padding: 10px 12px; font-weight: 600; justify-content: center;" title="Delete Selected Apps">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/></svg>
+        Delete
+      </button>
+    </div>
+  </div>
+
+  <!-- Configurator Slide-Over Drawer -->
+  <div class="drawer-overlay" id="configuratorOverlay" style="display:none;">
+    <div class="drawer-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 id="configuratorTitle" style="font-size: 20px; font-weight: 700;">New WebWrapper</h2>
+        <button class="btn-icon" id="btnCloseConfigurator" onclick="closeConfiguratorDrawer()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <input type="hidden" id="inpProjectId">
+
+      <div class="dash-card">
+        <div class="form-group">
+          <label>Application Name</label>
+          <input type="text" id="inpAppName" placeholder="e.g. Google">
+        </div>
+        <div class="form-group">
+          <label>Target URL</label>
+          <input type="url" id="inpTargetUrl" placeholder="https://google.com" autocapitalize="none" autocorrect="off" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="form-group">
+          <label>Generated Package Name</label>
+          <input type="text" id="inpPkgName" placeholder="e.g. com.wrapper.google" autocapitalize="none" autocorrect="off" autocomplete="off" spellcheck="false">
+        </div>
+      </div>
+
+      <div class="dash-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <label style="font-size:14px; font-weight:600; margin:0;">App Icon</label>
+          <div class="tab-toggles">
+            <button id="tabUpload" class="active">Upload</button>
+            <button id="tabGenerate">Generate</button>
+          </div>
+        </div>
+
+        <!-- Upload Pane -->
+        <div id="paneUpload">
+          <div class="icon-upload-zone" id="iconZone">
+            <input type="file" id="inpIcon" accept="*/*" style="display: none;">
+            <div class="icon-preview-container" id="iconPreviewContainer" style="display:none;">
+              <img id="iconPreview" src="" alt="Icon Preview">
+            </div>
+            <div class="icon-placeholder" id="iconPlaceholder">
+              <span>Tap to upload a square image (e.g. 512x512)</span>
+            </div>
+          </div>
+          <div id="upload-svg-controls" class="form-group" style="display: none; margin-top: 16px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); padding: 12px; border-radius: 12px;">
+              <div>
+                <div style="font-size: 13px; font-weight: 600; color: var(--text-primary);">Use raw SVG as-is</div>
+                <div style="font-size: 11px; color: var(--text-secondary);">Bypass backdrop backgrounds and custom scaling</div>
+              </div>
+              <label class="switch" style="position: relative; display: inline-block; width: 40px; height: 22px;">
+                <input type="checkbox" id="chkRawSvgUpload" style="opacity: 0; width: 0; height: 0;">
+                <span class="switch-slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.1); transition: .3s; border-radius: 22px; border: 1px solid var(--border-color);"></span>
+              </label>
+            </div>
+
+            <div id="svg-customizer-fields" style="display: flex; flex-direction: column; gap: 12px;">
+              <div style="margin-bottom: 12px;">
+                <label style="font-size: 12px; margin-bottom: 8px; font-weight: 600; display: block;">SVG Background Color</label>
+                <div style="display: flex; gap: 12px; align-items: center;">
+                  <input type="color" id="inpBgColorUpload" value="#6366f1" style="height: 36px; padding: 2px; width: 60px; flex-shrink: 0; background: none; border: none; cursor: pointer;">
+                  <span id="txtBgColorUpload" style="font-size: 13px; font-family: monospace; color: var(--text-secondary);">#6366f1</span>
+                </div>
+                <div class="color-presets" data-target="inpBgColorUpload">
+                  <div class="color-chip" style="background-color: #ffb7c5;" data-color="#ffb7c5" title="Sakura Pink"></div>
+                  <div class="color-chip" style="background-color: #fbcfe8;" data-color="#fbcfe8" title="Pastel Pink"></div>
+                  <div class="color-chip" style="background-color: #ff8a65;" data-color="#ff8a65" title="Peach Coral"></div>
+                  <div class="color-chip" style="background-color: #fef08a;" data-color="#fef08a" title="Butter Yellow"></div>
+                  <div class="color-chip" style="background-color: #a7f3d0;" data-color="#a7f3d0" title="Sage Green"></div>
+                  <div class="color-chip" style="background-color: #0abab5;" data-color="#0abab5" title="Tiffany Blue"></div>
+                  <div class="color-chip" style="background-color: #81e6d9;" data-color="#81e6d9" title="Soft Turquoise"></div>
+                  <div class="color-chip" style="background-color: #c084fc;" data-color="#c084fc" title="Lilac Lavender"></div>
+                  <div class="color-chip" style="background-color: #6366f1;" data-color="#6366f1" title="Indigo Blue"></div>
+                  <div class="color-chip" style="background-color: #64748b;" data-color="#64748b" title="Slate Gray"></div>
+                  <div class="color-chip" style="background-color: #1e1b4b;" data-color="#1e1b4b" title="Midnight Blue"></div>
+                  <div class="color-chip" style="background-color: #121214;" data-color="#121214" title="Dark Charcoal"></div>
+                </div>
+              </div>
+
+              <div style="margin-bottom: 12px;">
+                <label style="font-size: 12px; margin-bottom: 8px; font-weight: 600; display: block;">SVG Icon Color</label>
+                <div style="display: flex; gap: 12px; align-items: center;">
+                  <input type="color" id="inpFgColorUpload" value="#ffffff" style="height: 36px; padding: 2px; width: 60px; flex-shrink: 0; background: none; border: none; cursor: pointer;">
+                  <span id="txtFgColorUpload" style="font-size: 13px; font-family: monospace; color: var(--text-secondary);">#ffffff</span>
+                </div>
+                <div class="color-presets" data-target="inpFgColorUpload">
+                  <div class="color-chip" style="background-color: #ffffff;" data-color="#ffffff" title="Pure White"></div>
+                  <div class="color-chip" style="background-color: #f3f4f6;" data-color="#f3f4f6" title="Pastel Gray"></div>
+                  <div class="color-chip" style="background-color: #cbd5e1;" data-color="#cbd5e1" title="Slate Gray"></div>
+                  <div class="color-chip" style="background-color: #ffb7c5;" data-color="#ffb7c5" title="Sakura Pink"></div>
+                  <div class="color-chip" style="background-color: #fbcfe8;" data-color="#fbcfe8" title="Pastel Pink"></div>
+                  <div class="color-chip" style="background-color: #ff8a65;" data-color="#ff8a65" title="Peach Coral"></div>
+                  <div class="color-chip" style="background-color: #fef08a;" data-color="#fef08a" title="Butter Yellow"></div>
+                  <div class="color-chip" style="background-color: #a7f3d0;" data-color="#a7f3d0" title="Sage Green"></div>
+                  <div class="color-chip" style="background-color: #0abab5;" data-color="#0abab5" title="Tiffany Blue"></div>
+                  <div class="color-chip" style="background-color: #81e6d9;" data-color="#81e6d9" title="Soft Turquoise"></div>
+                  <div class="color-chip" style="background-color: #c084fc;" data-color="#c084fc" title="Lilac Lavender"></div>
+                  <div class="color-chip" style="background-color: #6366f1;" data-color="#6366f1" title="Indigo Blue"></div>
+                </div>
+              </div>
+
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                  <label style="font-size: 12px; font-weight: 600;">Vector Scale</label>
+                  <span id="txtSizeUpload" style="font-size: 11px; font-weight: bold; color: var(--primary-accent);">100%</span>
+                </div>
+                <input id="inpSizeUpload" type="range" min="50" max="150" step="5" value="100" style="width: 100%; accent-color: var(--primary-accent); cursor: pointer;">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Generate Pane -->
+        <div id="paneGenerate" style="display:none;">
+          <div class="icon-preview-container" style="height: 120px; border-radius: 12px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.2); margin-bottom: 12px; display: flex;">
+            <img id="genPreview" src="" alt="Generated Preview" style="display:none;">
+            <div id="genPlaceholder" class="icon-placeholder">Select an icon below</div>
+          </div>
+          <div class="form-group" style="display: flex; flex-direction: column; gap: 12px;">
+             <div style="margin-bottom: 12px;">
+               <label style="font-size: 12px; margin-bottom: 8px; font-weight: 600; display: block;">Background Color</label>
+               <div style="display: flex; gap: 12px; align-items: center;">
+                 <input type="color" id="inpBgColor" value="#6366f1" style="height: 36px; padding: 2px; width: 60px; flex-shrink: 0; background: none; border: none; cursor: pointer;">
+                 <span id="txtBgColor" style="font-size: 13px; font-family: monospace; color: var(--text-secondary);">#6366f1</span>
+               </div>
+               <div class="color-presets" data-target="inpBgColor">
+                 <div class="color-chip" style="background-color: #ffb7c5;" data-color="#ffb7c5" title="Sakura Pink"></div>
+                 <div class="color-chip" style="background-color: #fbcfe8;" data-color="#fbcfe8" title="Pastel Pink"></div>
+                 <div class="color-chip" style="background-color: #ff8a65;" data-color="#ff8a65" title="Peach Coral"></div>
+                 <div class="color-chip" style="background-color: #fef08a;" data-color="#fef08a" title="Butter Yellow"></div>
+                 <div class="color-chip" style="background-color: #a7f3d0;" data-color="#a7f3d0" title="Sage Green"></div>
+                 <div class="color-chip" style="background-color: #0abab5;" data-color="#0abab5" title="Tiffany Blue"></div>
+                 <div class="color-chip" style="background-color: #81e6d9;" data-color="#81e6d9" title="Soft Turquoise"></div>
+                 <div class="color-chip" style="background-color: #c084fc;" data-color="#c084fc" title="Lilac Lavender"></div>
+                 <div class="color-chip" style="background-color: #6366f1;" data-color="#6366f1" title="Indigo Blue"></div>
+                 <div class="color-chip" style="background-color: #64748b;" data-color="#64748b" title="Slate Gray"></div>
+                 <div class="color-chip" style="background-color: #1e1b4b;" data-color="#1e1b4b" title="Midnight Blue"></div>
+                 <div class="color-chip" style="background-color: #121214;" data-color="#121214" title="Dark Charcoal"></div>
+               </div>
+             </div>
+             <div style="margin-bottom: 12px;">
+               <label style="font-size: 12px; margin-bottom: 8px; font-weight: 600; display: block;">Icon Color</label>
+               <div style="display: flex; gap: 12px; align-items: center;">
+                 <input type="color" id="inpFgColor" value="#ffffff" style="height: 36px; padding: 2px; width: 60px; flex-shrink: 0; background: none; border: none; cursor: pointer;">
+                 <span id="txtFgColor" style="font-size: 13px; font-family: monospace; color: var(--text-secondary);">#ffffff</span>
+               </div>
+               <div class="color-presets" data-target="inpFgColor">
+                 <div class="color-chip" style="background-color: #ffffff;" data-color="#ffffff" title="Pure White"></div>
+                 <div class="color-chip" style="background-color: #f3f4f6;" data-color="#f3f4f6" title="Pastel Gray"></div>
+                 <div class="color-chip" style="background-color: #cbd5e1;" data-color="#cbd5e1" title="Slate Gray"></div>
+                 <div class="color-chip" style="background-color: #ffb7c5;" data-color="#ffb7c5" title="Sakura Pink"></div>
+                 <div class="color-chip" style="background-color: #fbcfe8;" data-color="#fbcfe8" title="Pastel Pink"></div>
+                 <div class="color-chip" style="background-color: #ff8a65;" data-color="#ff8a65" title="Peach Coral"></div>
+                 <div class="color-chip" style="background-color: #fef08a;" data-color="#fef08a" title="Butter Yellow"></div>
+                 <div class="color-chip" style="background-color: #a7f3d0;" data-color="#a7f3d0" title="Sage Green"></div>
+                 <div class="color-chip" style="background-color: #0abab5;" data-color="#0abab5" title="Tiffany Blue"></div>
+                 <div class="color-chip" style="background-color: #81e6d9;" data-color="#81e6d9" title="Soft Turquoise"></div>
+                 <div class="color-chip" style="background-color: #c084fc;" data-color="#c084fc" title="Lilac Lavender"></div>
+                 <div class="color-chip" style="background-color: #6366f1;" data-color="#6366f1" title="Indigo Blue"></div>
+               </div>
+             </div>
+          </div>
+          <div class="form-group" style="margin-bottom: 8px;">
+             <input type="text" id="inpIconSearch" placeholder="Search Lucide icons..." style="padding: 10px; font-size: 13px;">
+          </div>
+          <div id="iconGrid" class="icon-grid">
+             <div style="grid-column: 1 / -1; text-align: center; color: var(--text-secondary); font-size: 12px; padding: 12px;">Loading library...</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; margin-top: 20px;">
+  <button class="btn-primary" id="btnSaveApp" onclick="saveAppFromConfigurator()" style="flex: 1;">Save App</button>
+  <button class="btn-primary" id="btnCompile" onclick="compileAppFromConfigurator()" style="flex: 1; background: #10b981;">Compile & Install</button>
+</div></div>
+  </div>
+
+  <!-- Auto-Detect AppMaker Apps Slide-Over Drawer -->
+  <div class="drawer-overlay" id="autoDetectOverlay" style="display:none;">
+    <div class="drawer-content" style="max-width: 520px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div>
+          <h2 style="font-size: 20px; font-weight: 700; margin: 0; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Auto-Detect Apps
+          </h2>
+          <p style="font-size: 12px; color: var(--text-secondary); margin: 4px 0 0 0;">Discovered from server path SSOT.</p>
+        </div>
+        <button class="btn-icon" onclick="closeAutoDetectDrawer()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <!-- Source Toggle Tabs -->
+      <div class="tab-toggles" style="margin-bottom: 12px;">
+        <button id="tabAutoAppMaker" class="active" onclick="switchAutoDetectTab('appmaker')">
+          <span>⚡ AppMaker</span>
+          <span id="badgeCountAppMaker" class="tab-badge">0</span>
+        </button>
+        <button id="tabAutoOrbit" onclick="switchAutoDetectTab('orbit')">
+          <span>🪐 Orbit</span>
+          <span id="badgeCountOrbit" class="tab-badge">0</span>
+        </button>
+      </div>
+
+      <!-- Auto-Detect Search & Sort Filter -->
+      <div style="margin-bottom: 12px; display: flex; gap: 8px; align-items: center;">
+        <input type="text" id="inpAutoDetectSearch" placeholder="Search apps, package IDs, or subdomains..." oninput="renderAutoDetectGrid()" style="flex: 1; padding: 10px 14px; background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 13px; outline: none; font-family: var(--font-main);" autocapitalize="none" autocorrect="off" spellcheck="false">
+        <button class="btn-icon" id="btnSortAutoDetect" onclick="openAutoDetectSortMenu()" style="width: 38px; height: 38px; flex-shrink: 0; border-radius: 8px;" title="Sort Options">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
+        </button>
+      </div>
+
+      <!-- Auto-Detect Sort Settings Overlay Modal -->
+      <div class="modal-overlay" id="autoDetectSortMenuOverlay" style="display:none;" onclick="closeAutoDetectSortMenu()">
+        <div class="modal-card" style="max-width: 320px; padding: 20px;" onclick="event.stopPropagation()">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color);">
+            <h3 style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 8px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
+              Sort Import List
+            </h3>
+            <button class="btn-icon" style="width: 28px; height: 28px;" onclick="closeAutoDetectSortMenu()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+
+          <!-- Sort Mode Selection -->
+          <div style="margin-bottom: 16px;">
+            <label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">Sort By</label>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <button id="btnAutoSortMode_alpha" class="btn-card-action" onclick="switchAutoDetectSortMode('alpha')" style="width: 100%; padding: 10px 14px; font-size: 13px; font-weight: 600; justify-content: flex-start; gap: 8px;">
+                <span>🔤 Alphabetical (A-Z)</span>
+              </button>
+              <button id="btnAutoSortMode_catalog" class="btn-card-action" onclick="switchAutoDetectSortMode('catalog')" style="width: 100%; padding: 10px 14px; font-size: 13px; font-weight: 600; justify-content: flex-start; gap: 8px;">
+                <span>📦 In Catalog Status</span>
+              </button>
+              <button id="btnAutoSortMode_installed" class="btn-card-action" onclick="switchAutoDetectSortMode('installed')" style="width: 100%; padding: 10px 14px; font-size: 13px; font-weight: 600; justify-content: flex-start; gap: 8px;">
+                <span>✓ Installation Status</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Sort Direction Selection -->
+          <div>
+            <label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">Order Direction</label>
+            <div class="tab-toggles" style="display: flex; gap: 8px;">
+              <button id="btnAutoSortOrder_asc" onclick="switchAutoDetectSortOrder('asc')" style="flex: 1; padding: 10px; font-size: 13px; font-weight: 600;">
+                Regular (Asc)
+              </button>
+              <button id="btnAutoSortOrder_desc" onclick="switchAutoDetectSortOrder('desc')" style="flex: 1; padding: 10px; font-size: 13px; font-weight: 600;">
+                Reversed (Desc)
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 8px 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 8px;">
+        <span id="autoDetectStatusCount" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Scanning server...</span>
+        <div style="display: flex; gap: 6px;">
+          <button class="btn-card-action" id="btnSelectAllAuto" onclick="toggleSelectAllAutoApps()" style="font-size: 11px; padding: 2px 8px;">
+            Select All
+          </button>
+          <button class="btn-card-action" onclick="fetchAppMakerApps()" style="font-size: 11px; padding: 2px 8px; display: flex; align-items: center; gap: 4px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <div id="autoDetectAppGrid" style="display: flex; flex-direction: column; gap: 10px; max-height: 55vh; overflow-y: auto; margin-bottom: 16px; padding-right: 4px;">
+        <!-- Dynamic AppMaker App Cards Render Here -->
+      </div>
+
+      <div style="display: flex; gap: 12px; margin-top: auto;">
+        <button class="btn-primary" id="btnImportSelectedAuto" onclick="importSelectedAutoApps()" style="width: 100%; background: #10b981; display: flex; align-items: center; justify-content: center; gap: 6px;">
+          Import Selected Apps
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

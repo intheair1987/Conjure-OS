@@ -1,0 +1,12 @@
+{
+    "double_tap_speed": 300,
+    "long_press_duration": 450,
+    "vibration_intensity": 10,
+    "auditor_enabled": false,
+    "long_press_threshold": 5,
+    "swipe_enabled": false,
+    "swipe_reset": 60,
+    "swipe_archive": 130,
+    "swipe_delete": 180,
+    "swipe_fast_delete": 250
+}

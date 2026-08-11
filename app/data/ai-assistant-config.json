@@ -1,0 +1,12 @@
+{
+    "monitoring_enabled": true,
+    "dispatcher_model": "google\/gemini-3-flash-preview",
+    "dispatcher_prompt": "You are a routing system. Determine which Assistant should handle the user's transcript based on their ROLE. Pay specific attention to the commands that an assistant detects in a note. Return ONLY the ID of the assistant. If the note contains no assistant-specific command or assistant name or nickname, return 'NONE'.",
+    "include_name": true,
+    "include_nickname": true,
+    "include_role": false,
+    "include_prompt": false,
+    "mechanical_mode": true,
+    "include_triggers": true,
+    "dispatcher_temperature": 0.10000000000000001
+}

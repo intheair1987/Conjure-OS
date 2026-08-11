@@ -1,0 +1,9 @@
+{
+    "spacing": 10,
+    "gap": 15,
+    "footer_margin": 12,
+    "theme": "glass",
+    "layout_mode": "grid",
+    "grid_cols": 2,
+    "grid_count_opacity": 40
+}

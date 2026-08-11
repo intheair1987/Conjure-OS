@@ -1,0 +1,84 @@
+:root {
+  --bg-workspace: #050508;
+  --bg-card: rgba(18, 16, 28, 0.45);
+  --border-glass: rgba(255, 255, 255, 0.05);
+  --border-glass-active: rgba(255, 255, 255, 0.12);
+  --color-primary: #6366f1;
+  --color-primary-rgb: 99, 102, 241;
+  --glow-color: rgba(99, 102, 241, 0.45);
+  --glow-color-soft: rgba(99, 102, 241, 0.15);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: transparent; }
+body {
+  background-color: var(--bg-workspace);
+  background-image: radial-gradient(at 50% 0%, rgba(15, 12, 30, 0.8) 0px, transparent 60%), radial-gradient(at 100% 100%, rgba(10, 10, 24, 0.8) 0px, transparent 50%);
+  color: #f3f4f6;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  min-height: 100vh;
+  padding: 48px 24px 30px 24px;
+  overflow-x: hidden;
+}
+.dash-header { margin-bottom: 2rem; }
+.dash-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2);
+  padding: 4px 10px; border-radius: 30px; font-size: 10px; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--color-primary); font-weight: 600; margin-bottom: 0.75rem;
+}
+.dash-badge-dot {
+  width: 5px; height: 5px; background-color: var(--color-primary); border-radius: 50%;
+  box-shadow: 0 0 6px var(--color-primary); animation: pulse-dot 2s infinite;
+}
+@keyframes pulse-dot { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
+.dash-title { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px; }
+.dash-desc { font-size: 13px; color: #9ca3af; font-weight: 400; line-height: 1.4; }
+.dash-card {
+  background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 20px;
+  padding: 1.25rem; margin-bottom: 1rem; transition: border-color 0.3s ease;
+}
+.dash-card:active { border-color: var(--border-glass-active); }
+.card-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.card-info { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.card-title { font-size: 14px; font-weight: 600; color: #ffffff; letter-spacing: -0.01em; }
+.card-desc { font-size: 12px; color: rgba(255, 255, 255, 0.45); line-height: 1.4; }
+
+.switch { position: relative; display: inline-block; width: 44px; height: 24px; cursor: pointer; flex-shrink:0; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.switch-slider {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 100px; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.switch-slider::before {
+  content: ""; position: absolute; height: 16px; width: 16px; left: 3px; bottom: 3px;
+  background-color: #ffffff; border-radius: 50%; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+input:checked + .switch-slider { background: var(--color-primary); border-color: rgba(255, 255, 255, 0.1); box-shadow: 0 0 12px var(--glow-color); }
+input:checked + .switch-slider::before { transform: translateX(20px); }
+
+.slider-control { margin-top: 1.25rem; width: 100%; }
+.slider-header { display: flex; justify-content: space-between; font-size: 12px; color: rgba(255, 255, 255, 0.6); margin-bottom: 8px; font-weight: 500; }
+.slider-value { font-weight: 600; color: var(--color-primary); }
+.custom-slider {
+  -webkit-appearance: none; width: 100%; height: 6px; border-radius: 100px;
+  background: rgba(255, 255, 255, 0.05); outline: none; border: 1px solid rgba(255, 255, 255, 0.02);
+}
+.custom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%;
+  background: #ffffff; border: 2px solid var(--color-primary); box-shadow: 0 0 10px var(--glow-color);
+}
+
+.color-row { display: flex; gap: 12px; margin-top: 12px; }
+.color-dot {
+  width: 28px; height: 28px; border-radius: 50%; border: 2px solid transparent; transition: transform 0.2s ease, border-color 0.2s;
+}
+.color-dot.active { border-color: #ffffff; transform: scale(1.1); }
+
+.permission-btn {
+  background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 8px 16px; border-radius: 12px; color: #ffffff; font-size: 12px; font-weight: 600; transition: all 0.2s;
+}
+.permission-btn.granted {
+  background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.2); color: #10b981; pointer-events: none;
+}

@@ -1,0 +1,9 @@
+{
+    "order": [
+        "wc-badge",
+        "folder-badge",
+        "todo-label-badge",
+        "ai-badge",
+        "manual-edited-badge"
+    ]
+}
